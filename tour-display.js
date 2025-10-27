@@ -224,7 +224,42 @@ function filterTourRoutes() {
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     displayTourRoutes();
+    setupTourFilters();
 });
+
+function setupTourFilters() {
+    const applyBtn = document.getElementById('filterApply');
+    const resetBtn = document.getElementById('filterReset');
+    const maxDays = document.getElementById('filterMaxDays');
+    const maxPrice = document.getElementById('filterMaxPrice');
+    const countryCbs = Array.from(document.querySelectorAll('.filter-country'));
+
+    if (applyBtn) applyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        filterTourRoutes();
+    });
+
+    if (resetBtn) resetBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (maxDays) maxDays.value = '';
+        if (maxPrice) maxPrice.value = '';
+        countryCbs.forEach(cb => cb.checked = false);
+        displayTourRoutes();
+    });
+
+    // 실시간 필터링
+    if (maxDays) maxDays.addEventListener('input', debounce(filterTourRoutes, 200));
+    if (maxPrice) maxPrice.addEventListener('input', debounce(filterTourRoutes, 200));
+    countryCbs.forEach(cb => cb.addEventListener('change', filterTourRoutes));
+}
+
+function debounce(fn, delay) {
+    let t;
+    return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
 // ===== 투어 루트 표시 로직 =====
 
 // 투어 루트 카드 생성

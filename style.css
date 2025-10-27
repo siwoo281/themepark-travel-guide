@@ -352,6 +352,49 @@ body {
     margin-top: 2rem;
 }
 
+/* 필터 바 */
+.tour-filters {
+    display: grid;
+    grid-template-columns: 240px 240px 1fr auto;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+}
+
+.tour-filters .filter-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--dark);
+}
+
+.tour-filters .filter-group input[type="number"] {
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.tour-filters .filter-group.countries {
+    grid-column: span 2;
+}
+
+.tour-filters .countries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
 .tour-routes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -781,6 +824,8 @@ body {
 }
 
 @media (max-width: 768px) {
+    .tour-filters { grid-template-columns: 1fr; }
+    .tour-filters .filter-group.countries { grid-column: span 1; }
     .nav {
         gap: 1rem;
         font-size: 0.9rem;

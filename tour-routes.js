@@ -2,6 +2,42 @@
 
 const TOUR_ROUTES = [
     {
+        id: 'kr-au-hk-grand',
+        name: '한국 → 호주 → 홍콩 테마파크 투어',
+        duration: '9일',
+        countries: ['한국', '호주', '홍콩'],
+        totalDistance: '약 8,500km',
+        basePrice: 5200000,
+        currency: 'KRW',
+        image: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800',
+        description: '한국의 대표 테마파크와 호주 골드코스트 3대 파크, 홍콩 디즈니랜드까지 한 번에!',
+        highlights: [
+            '에버랜드 + 롯데월드',
+            '무비월드·드림월드·씨월드(호주)',
+            '홍콩 디즈니랜드',
+            '항공 3회 이동 포함'
+        ],
+        itinerary: [
+            { day: 1, location: '서울(한국)', parks: ['에버랜드'], activities: ['T익스프레스', '판다월드', '사파리'], accommodation: '용인 리조트', meals: ['중식','석식'] },
+            { day: 2, location: '서울(한국)', parks: ['롯데월드'], activities: ['자이로드롭', '아트란티스', '민속박물관'], accommodation: '인천공항 호텔', meals: ['조식','중식'] },
+            { day: 3, location: '골드코스트(호주)', parks: ['무비월드'], activities: ['슈퍼맨 이스케이프', 'DC 리벌스', '스턴트쇼'], accommodation: '골드코스트 리조트', meals: ['석식'] },
+            { day: 4, location: '골드코스트(호주)', parks: ['드림월드'], activities: ['자이언트 드롭', '타이거 아일랜드'], accommodation: '골드코스트 리조트', meals: ['조식','석식'] },
+            { day: 5, location: '골드코스트(호주)', parks: ['씨월드'], activities: ['돌고래쇼', '제트 레스큐'], accommodation: '골드코스트 리조트', meals: ['조식','석식'] },
+            { day: 6, location: '홍콩', parks: ['홍콩 디즈니랜드'], activities: ['아이언맨', '미스틱 매너', '프로즌 월드'], accommodation: '디즈니랜드 호텔', meals: ['조식','석식'] },
+            { day: 7, location: '홍콩', parks: ['오션파크'], activities: ['판다관', '아쿠아시티', '케이블카'], accommodation: '센트럴 호텔', meals: ['조식','석식'] },
+            { day: 8, location: '홍콩', parks: [], activities: ['쇼핑', '자유 일정'], accommodation: '센트럴 호텔', meals: ['조식'] },
+            { day: 9, location: '귀국', parks: [], activities: ['공항 이동', '귀국'], accommodation: '-', meals: ['조식'] }
+        ],
+        includes: [
+            '왕복/구간 항공권 (ICN-OOL, OOL-HKG, HKG-ICN)',
+            '8박 숙박 (4성급)',
+            '조식 7회',
+            '모든 테마파크 입장권',
+            '여행자 보험'
+        ],
+        excludes: ['중식 및 석식(일부)', '개인 경비']
+    },
+    {
         id: 'asia-grand-tour',
         name: '아시아 테마파크 그랜드 투어',
         duration: '10일',

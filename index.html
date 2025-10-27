@@ -17,6 +17,7 @@
                 <h1>테마파크 여행 프로그램</h1>
             </div>
             <nav class="nav">
+                <a href="#tour-routes">투어 루트</a>
                 <a href="#packages">여행 상품</a>
                 <a href="#planner">일정 짜기</a>
                 <a href="#guide">여행 가이드</a>
@@ -35,6 +36,56 @@
 
     <div class="main-container">
         <!-- 여행 상품 리스트 (메인) -->
+        <!-- 투어 루트 섹션 (상단으로 이동) -->
+        <section id="tour-routes" class="tour-routes-section">
+            <div class="section-header">
+                <h2><i class="fas fa-route"></i> 테마파크 월드 투어</h2>
+                <p>여러 나라의 테마파크를 한번에! 특별한 루트 여행</p>
+            </div>
+
+            <!-- 필터 바 -->
+            <div class="tour-filters">
+                <div class="filter-group">
+                    <label for="filterMaxDays"><i class="fas fa-clock"></i> 최대 일정(일)</label>
+                    <input type="number" id="filterMaxDays" placeholder="예: 10">
+                </div>
+                <div class="filter-group">
+                    <label for="filterMaxPrice"><i class="fas fa-won-sign"></i> 예산(만원)</label>
+                    <input type="number" id="filterMaxPrice" placeholder="예: 500">
+                </div>
+                <div class="filter-group countries">
+                    <span class="filter-label"><i class="fas fa-globe"></i> 국가</span>
+                    <div class="countries-grid">
+                        <label><input type="checkbox" class="filter-country" value="한국"> 한국</label>
+                        <label><input type="checkbox" class="filter-country" value="일본"> 일본</label>
+                        <label><input type="checkbox" class="filter-country" value="홍콩"> 홍콩</label>
+                        <label><input type="checkbox" class="filter-country" value="싱가포르"> 싱가포르</label>
+                        <label><input type="checkbox" class="filter-country" value="미국"> 미국</label>
+                        <label><input type="checkbox" class="filter-country" value="프랑스"> 프랑스</label>
+                        <label><input type="checkbox" class="filter-country" value="독일"> 독일</label>
+                        <label><input type="checkbox" class="filter-country" value="네덜란드"> 네덜란드</label>
+                        <label><input type="checkbox" class="filter-country" value="덴마크"> 덴마크</label>
+                        <label><input type="checkbox" class="filter-country" value="중국"> 중국</label>
+                        <label><input type="checkbox" class="filter-country" value="호주"> 호주</label>
+                        <label><input type="checkbox" class="filter-country" value="말레이시아"> 말레이시아</label>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-secondary" id="filterReset"><i class="fas fa-undo"></i> 초기화</button>
+                    <button class="btn btn-primary" id="filterApply"><i class="fas fa-filter"></i> 필터 적용</button>
+                </div>
+            </div>
+
+            <div class="tour-routes-grid" id="tourRoutesGrid">
+                <!-- 동적으로 생성됨 -->
+            </div>
+
+            <div class="loading" id="tourLoading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> 투어 루트를 불러오는 중...
+            </div>
+        </section>
+
+        <!-- 여행 상품 (아래로 이동) -->
         <section id="packages" class="packages-section">
             <div class="section-header">
                 <h2><i class="fas fa-gifts"></i> 인기 테마파크 여행 상품</h2>
@@ -50,21 +101,7 @@
             </div>
         </section>
 
-        <!-- 투어 루트 섹션 -->
-        <section id="tour-routes" class="tour-routes-section">
-            <div class="section-header">
-                <h2><i class="fas fa-route"></i> 테마파크 월드 투어</h2>
-                <p>여러 나라의 테마파크를 한번에! 특별한 루트 여행</p>
-            </div>
-
-            <div class="tour-routes-grid" id="tourRoutesGrid">
-                <!-- 동적으로 생성됨 -->
-            </div>
-
-            <div class="loading" id="tourLoading" style="display: none;">
-                <i class="fas fa-spinner fa-spin"></i> 투어 루트를 불러오는 중...
-            </div>
-        </section>
+        
 
         <!-- 사용자 일정 짜기 (사이드바) -->
         <aside id="planner" class="planner-section">
