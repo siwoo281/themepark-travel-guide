@@ -86,6 +86,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 맨 위로 스크롤 확실히 적용
     window.scrollTo(0, 0);
+
+    // 외부 API(위키피디아/위키미디어)로 디즈니 성 이미지 시도 후 실패 시 Base64 유지
+    // 페이지 초기 렌더를 지연시키지 않도록 await 없이 실행
+    setHeroImageFromWikipedia();
     
     // 환율 데이터 로드
     await loadExchangeRates();
@@ -114,6 +118,74 @@ document.addEventListener('DOMContentLoaded', async () => {
         hideLoadingSkeleton();
     }
 });
+
+// 위키피디아 REST API를 사용해 디즈니 성 이미지를 히어로에 적용 (실패 시 Base64 폴백)
+async function setHeroImageFromWikipedia() {
+    try {
+        const heroImg = document.querySelector('.hero .hero-bg-img img');
+        if (!heroImg) return;
+
+        const fallbackSrc = heroImg.getAttribute('src');
+        if (fallbackSrc) heroImg.setAttribute('data-fallback-src', fallbackSrc);
+
+        const titles = [
+            'Cinderella_Castle',
+            'Cinderella_Castle_(Tokyo_Disneyland)',
+            'Sleeping_Beauty_Castle',
+            'Sleeping_Beauty_Castle_(Disneyland)',
+            'Le_Château_de_la_Belle_au_Bois_Dormant'
+        ];
+
+        const fetchJSON = async (url, timeoutMs = 3500) => {
+            const controller = new AbortController();
+            const t = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: controller.signal });
+                return res.ok ? await res.json() : null;
+            } finally {
+                clearTimeout(t);
+            }
+        };
+
+        let imageUrl = null;
+        for (const title of titles) {
+            try {
+                const api = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+                const data = await fetchJSON(api);
+                if (!data) continue;
+                const best = (data.originalimage && data.originalimage.source) || (data.thumbnail && data.thumbnail.source);
+                if (best) {
+                    imageUrl = best;
+                    break;
+                }
+            } catch (_) {
+                // 다음 후보로 진행
+                continue;
+            }
+        }
+
+        if (imageUrl) {
+            // 썸네일 URL의 해상도 파라미터를 확대 (..../thumb/.../800px- 파일 패턴 교체)
+            imageUrl = imageUrl.replace(/(\d{2,4})px-/i, '1600px-');
+
+            heroImg.referrerPolicy = 'no-referrer';
+            heroImg.crossOrigin = 'anonymous';
+            heroImg.decoding = 'async';
+            heroImg.loading = 'eager';
+            heroImg.onerror = () => {
+                const base64 = heroImg.getAttribute('data-fallback-src');
+                if (base64) heroImg.src = base64;
+                console.warn('⚠️ 외부 디즈니 성 이미지 로드 실패. 내장 Base64로 복구.');
+            };
+            heroImg.src = imageUrl;
+            console.log('✅ 위키피디아 이미지 적용:', imageUrl);
+        } else {
+            console.warn('⚠️ 디즈니 성 외부 이미지를 찾지 못해 Base64를 유지합니다.');
+        }
+    } catch (err) {
+        console.warn('⚠️ 외부 이미지 적용 중 오류. Base64 유지:', err);
+    }
+}
 
 // 접근성: ESC 키로 모달 닫기
 document.addEventListener('keydown', (e) => {
