@@ -181,7 +181,7 @@ html {
     inset: 0;
     /* 오버레이를 더 옅게 조정하여 배경 이미지가 선명하게 보이도록 함 */
     background: linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.30) 100%);
-    z-index: 0;
+    z-index: 1; /* 이미지 위, 콘텐츠 아래 */
 }
 
 /* 반짝이는 별 효과 */
@@ -217,8 +217,25 @@ html {
 
 .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 2; /* 오버레이 위 */
     max-width: 1000px;
+}
+
+/* 실제 이미지 태그로도 중복 렌더링하여 어떤 환경에서도 표시되도록 함 */
+.hero .hero-bg-img {
+    position: absolute;
+    inset: 0;
+    z-index: 0; /* 맨 아래: 배경 이미지 */
+    overflow: hidden;
+}
+
+.hero .hero-bg-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    user-select: none;
 }
 
 .hero h2 {
