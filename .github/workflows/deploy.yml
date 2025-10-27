@@ -1,10 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (deprecated)
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  # Disable automatic triggers to avoid duplicate Pages deploy runs.
+  # Keep only manual dispatch for emergency use.
   workflow_dispatch:
 
 permissions:
@@ -13,8 +11,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "pages-deprecated"
+  cancel-in-progress: true
 
 jobs:
   # Build job
