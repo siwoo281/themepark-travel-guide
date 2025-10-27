@@ -60,7 +60,9 @@ body {
 .logo h1 {
     font-size: 1.5rem;
     background: var(--gradient);
+    background-clip: text; /* Standard property for compatibility */
     -webkit-background-clip: text;
+    color: transparent; /* Fallback for non-webkit */
     -webkit-text-fill-color: transparent;
     font-weight: 900;
 }
@@ -341,6 +343,191 @@ body {
     margin-right: 10px;
 }
 
+/* ===== 투어 루트 섹션 ===== */
+.tour-routes-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-top: 2rem;
+}
+
+.tour-routes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.tour-route-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tour-route-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+.tour-route-image {
+    position: relative;
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.tour-route-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--gradient-warm);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.35);
+}
+
+.tour-route-countries {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(4px);
+}
+
+.tour-route-content {
+    padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.tour-route-content h3 {
+    font-size: 1.25rem;
+    color: var(--dark);
+    margin-bottom: 0.4rem;
+}
+
+.tour-route-description {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+}
+
+.tour-route-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.highlight-badge {
+    background: #f8f9fb;
+    border: 1px solid #eee;
+    color: #555;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tour-route-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tour-route-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.tour-route-info .info-item i {
+    color: var(--accent);
+}
+
+.tour-route-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+
+.tour-route-price .price-label {
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.tour-route-price .price-amount {
+    color: var(--primary);
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.view-route-btn {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--gradient);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.view-route-btn:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.35);
+}
+
+/* 상세 모달 내 일정 스타일 */
+.route-modal-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.route-modal-image {
+    width: 180px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.route-modal-title h2 { margin: 0 0 6px; }
+.route-modal-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta-badge { background: #f4f5f7; border: 1px solid #eee; padding: 4px 8px; border-radius: 999px; font-size: 0.8rem; }
+
+.highlights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.highlight-item { background: #f8f9fb; border: 1px solid #eee; padding: 10px; border-radius: 10px; display: flex; gap: 8px; align-items: center; }
+
+.itinerary-container { display: flex; flex-direction: column; gap: 10px; }
+.itinerary-day { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 12px; }
+.day-number { font-weight: 800; color: var(--accent); margin-bottom: 6px; }
+.day-parks { margin: 6px 0; }
+.park-tag { background: #eef1ff; color: #3f51b5; border: 1px solid #dfe4ff; padding: 4px 8px; border-radius: 999px; margin-right: 6px; font-size: 0.8rem; }
+.day-info { display: flex; gap: 12px; color: #666; font-size: 0.9rem; margin-top: 6px; }
+
+.includes-list, .excludes-list { padding-left: 1rem; }
+.includes-list li, .excludes-list li { margin: 4px 0; }
+
+.pricing-section .pricing-calculator { background: #f8f9fb; border: 1px solid #eee; border-radius: 12px; padding: 12px; }
+.pricing-calculator .price-base { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.pricing-calculator .price-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.pricing-calculator .price-total { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 1.2rem; font-weight: 900; color: var(--primary); }
 /* ===== 플래너 섹션 ===== */
 .planner-section {
     background: white;
