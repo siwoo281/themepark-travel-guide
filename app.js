@@ -165,6 +165,36 @@ function tryApplyUserHeroImageOrFallback() {
         heroImg.setAttribute('data-fallback-src', fallbackSrc);
     }
 
+    // 0) 캐시된 히어로 이미지가 있으면 즉시 적용 (재방문 시 첫 페인트 지연 없이 표시)
+    try {
+        const cached = localStorage.getItem('HERO_IMAGE_URL');
+        if (cached) {
+            // 미리 로드 힌트 추가 (런타임 프리로드)
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = cached;
+            link.fetchPriority = 'high';
+            document.head.appendChild(link);
+
+            // 즉시 적용
+            heroImg.referrerPolicy = 'no-referrer';
+            heroImg.crossOrigin = 'anonymous';
+            heroImg.decoding = 'async';
+            heroImg.loading = 'eager';
+            heroImg.fetchPriority = 'high';
+            heroImg.width = 1600;
+            heroImg.height = 900;
+            try { setHeroImageResponsiveSources(heroImg, cached); } catch (_) {}
+            heroImg.src = cached;
+            if (heroSection) {
+                heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${cached}')`;
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center';
+            }
+        }
+    } catch (_) { /* ignore storage errors */ }
+
     // 쿼리 파라미터 우선
     const params = new URLSearchParams(window.location.search);
     const qp = params.get('hero') || params.get('heroImg') || params.get('image');
@@ -210,6 +240,8 @@ function tryApplyUserHeroImageOrFallback() {
                     heroSection.style.backgroundSize = 'cover';
                     heroSection.style.backgroundPosition = 'center';
                 }
+                // 성공 시 캐시 저장
+                try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) {}
             } catch (_) { /* noop */ }
             console.log('✅ 사용자 지정 히어로 이미지 적용 성공');
         };
@@ -255,6 +287,8 @@ function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {
                     heroSection.style.backgroundSize = 'cover';
                     heroSection.style.backgroundPosition = 'center';
                 }
+                // 성공적으로 로드된 URL을 캐시에 저장하여 다음 방문 시 즉시 표시
+                try { localStorage.setItem('HERO_IMAGE_URL', next); } catch (_) {}
             } catch (_) { /* noop */ }
         };
         try { setHeroImageResponsiveSources(imgEl, next); } catch (_) {}
