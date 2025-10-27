@@ -119,7 +119,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// 위키피디아 REST API를 사용해 디즈니 성 이미지를 히어로에 적용 (실패 시 Base64 폴백)
+// 공통: 순차 후보 URL을 시도하며 실패 시 다음 후보로 넘어가기
+function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {
+    if (!imgEl) return;
+    let idx = 0;
+    imgEl.referrerPolicy = 'no-referrer';
+    imgEl.crossOrigin = 'anonymous';
+    imgEl.decoding = 'async';
+    imgEl.loading = 'eager';
+
+    const tryNext = () => {
+        const next = candidates[idx++];
+        if (!next) {
+            if (fallbackSrc) imgEl.src = fallbackSrc;
+            console.warn('⚠️ 모든 외부 이미지 시도 실패. Base64로 폴백합니다.');
+            return;
+        }
+        console.log('🔄 히어로 이미지 시도:', next);
+        imgEl.onerror = () => {
+            console.warn('⚠️ 이미지 로드 실패:', next);
+            tryNext();
+        };
+        imgEl.src = next;
+    };
+
+    tryNext();
+}
+
+async function getUnsplashCandidate() {
+    try {
+        const q = encodeURIComponent('disney castle fireworks night');
+        const key = window.CONFIG?.KEYS?.UNSPLASH_ACCESS_KEY;
+        if (key) {
+            const url = `https://api.unsplash.com/search/photos?query=${q}&orientation=landscape&content_filter=high&per_page=1`;
+            const res = await fetch(url, { headers: { Authorization: `Client-ID ${key}` } });
+            if (res.ok) {
+                const json = await res.json();
+                const photo = json?.results?.[0];
+                const u = photo?.urls?.regular || photo?.urls?.full || photo?.urls?.raw;
+                if (u) return u;
+            }
+        }
+        // 키가 없거나 실패 시 소스 API(키 불요, 랜덤 이미지)
+        return `https://source.unsplash.com/1600x900/?disney,castle,fireworks,night`;
+    } catch (_) {
+        return null;
+    }
+}
+
+async function getPexelsCandidate() {
+    try {
+        const key = window.CONFIG?.KEYS?.PEXELS_API_KEY;
+        if (!key) return null;
+        const q = encodeURIComponent('disney castle fireworks night');
+        const url = `https://api.pexels.com/v1/search?query=${q}&orientation=landscape&size=large&per_page=1`;
+        const res = await fetch(url, { headers: { Authorization: key } });
+        if (!res.ok) return null;
+        const json = await res.json();
+        const photo = json?.photos?.[0];
+        const u = photo?.src?.landscape || photo?.src?.large2x || photo?.src?.large || photo?.src?.original;
+        return u || null;
+    } catch (_) {
+        return null;
+    }
+}
+
+// 위키피디아 REST API를 사용해 디즈니 성 이미지를 히어로에 적용 (실패 시 스톡 API 폴백, 최종 Base64)
 async function setHeroImageFromWikipedia() {
     try {
         const heroImg = document.querySelector('.hero .hero-bg-img img');
@@ -164,23 +229,18 @@ async function setHeroImageFromWikipedia() {
             }
         }
 
+        const candidates = [];
         if (imageUrl) {
-            // 썸네일 URL의 해상도 파라미터를 확대 (..../thumb/.../800px- 파일 패턴 교체)
-            imageUrl = imageUrl.replace(/(\d{2,4})px-/i, '1600px-');
+            // 썸네일 URL 해상도 업스케일 (thumb 패턴)
+            candidates.push(imageUrl.replace(/(\d{2,4})px-/i, '1600px-'));
+        }
+        const u = await getUnsplashCandidate(); if (u) candidates.push(u);
+        const p = await getPexelsCandidate(); if (p) candidates.push(p);
 
-            heroImg.referrerPolicy = 'no-referrer';
-            heroImg.crossOrigin = 'anonymous';
-            heroImg.decoding = 'async';
-            heroImg.loading = 'eager';
-            heroImg.onerror = () => {
-                const base64 = heroImg.getAttribute('data-fallback-src');
-                if (base64) heroImg.src = base64;
-                console.warn('⚠️ 외부 디즈니 성 이미지 로드 실패. 내장 Base64로 복구.');
-            };
-            heroImg.src = imageUrl;
-            console.log('✅ 위키피디아 이미지 적용:', imageUrl);
+        if (candidates.length > 0) {
+            setHeroImageFromCandidates(heroImg, candidates, fallbackSrc);
         } else {
-            console.warn('⚠️ 디즈니 성 외부 이미지를 찾지 못해 Base64를 유지합니다.');
+            console.warn('⚠️ 외부 이미지 후보를 찾지 못했습니다. Base64 유지');
         }
     } catch (err) {
         console.warn('⚠️ 외부 이미지 적용 중 오류. Base64 유지:', err);

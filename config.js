@@ -12,6 +12,9 @@ const CONFIG = {
     // API 키 (환경변수로 관리)
     KEYS: {
         OPENWEATHER: window.ENV?.OPENWEATHER_KEY || '',
+        // 선택적 키: 있으면 정식 API 경로를 사용, 없으면 키 미필요 소스/기본 폴백 사용
+        UNSPLASH_ACCESS_KEY: window.ENV?.UNSPLASH_ACCESS_KEY || '',
+        PEXELS_API_KEY: window.ENV?.PEXELS_API_KEY || '',
         // GitHub Pages에서는 환경변수 사용 불가하므로 public API만 사용
     },
     
