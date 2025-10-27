@@ -55,11 +55,19 @@ yarn-error.log*
 # Node modules (if adding build tools later)
 node_modules/
 npm-debug.log
+package-lock.json
+yarn.lock
 
 # Environment variables (if needed)
 .env
 .env.local
 .env.*.local
+config.local.js
+secrets.js
+
+# API Keys (보안 중요!)
+*.env
+.env.*
 
 # Build output (if adding build step)
 dist/

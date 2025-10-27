@@ -1,0 +1,53 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script"
+  },
+  "globals": {
+    "CONFIG": "readonly",
+    "TOUR_ROUTES": "readonly",
+    "themeParkAPI": "writable",
+    "ThemeParkAPI": "readonly",
+    "showPackageDetail": "readonly",
+    "showRouteDetail": "readonly",
+    "closeModal": "readonly",
+    "bookPackage": "readonly",
+    "updateRoutePrice": "readonly",
+    "calculateRouteCost": "readonly",
+    "filterRoutes": "readonly",
+    "showToast": "readonly",
+    "createSkeletonCards": "readonly",
+    "showErrorState": "readonly",
+    "handleImageError": "readonly",
+    "lazyLoader": "readonly",
+    "LazyImageLoader": "readonly",
+    "StorageHelper": "readonly",
+    "optimizeImageUrl": "readonly",
+    "fetchWithRetry": "readonly",
+    "debounce": "readonly",
+    "throttle": "readonly",
+    "formatDate": "readonly",
+    "formatNumber": "readonly",
+    "formatPrice": "readonly",
+    "logError": "readonly",
+    "measurePerformance": "readonly",
+    "measurePerformanceAsync": "readonly"
+  },
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error", "log"] }],
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "indent": ["error", 4, { "SwitchCase": 1 }],
+    "comma-dangle": ["error", "never"],
+    "no-trailing-spaces": "error",
+    "eol-last": ["error", "always"],
+    "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }]
+  }
+}

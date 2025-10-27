@@ -1,0 +1,449 @@
+/* ===== About 섹션 스타일 ===== */
+
+.about-section {
+    padding: 6rem 0;
+    background: #f8f9fa;
+}
+
+.about-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 3rem;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.about-header h2 {
+    font-size: 3rem;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-weight: 900;
+}
+
+.about-subtitle {
+    font-size: 1.4rem;
+    color: #666;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* About 카드 공통 */
+.about-card {
+    background: white;
+    border-radius: 24px;
+    padding: 3.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease-out;
+    border: 1px solid #e8e8e8;
+}
+
+.about-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    border-color: #667eea;
+}
+
+.about-card.highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.about-card.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.about-card.highlight .card-icon,
+.about-card.success .card-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.card-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.card-content h3 {
+    font-size: 2.2rem;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.about-card.highlight .card-content h3,
+.about-card.success .card-content h3 {
+    color: white;
+}
+
+.card-content p {
+    font-size: 1.15rem;
+    line-height: 2;
+    color: #444;
+}
+
+.about-card.highlight .card-content p,
+.about-card.success .card-content p {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.15rem;
+}
+
+/* 이론 리스트 */
+.theory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.theory-item {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 5px solid white;
+    transition: all 0.3s ease;
+}
+
+.theory-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(8px);
+}
+
+.theory-badge {
+    display: inline-block;
+    background: white;
+    color: #667eea;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.theory-item p {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 2;
+}
+
+/* 2열 그리드 */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 3rem;
+}
+
+/* 기능 리스트 */
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    padding: 0.5rem 0;
+}
+
+.feature-list i {
+    color: #667eea;
+    margin-top: 0.3rem;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+}
+
+/* 기술 스택 */
+.tech-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    margin-top: 1rem;
+}
+
+.tech-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tech-category {
+    font-weight: 700;
+    color: #667eea;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.tech-items {
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* 성과 그리드 */
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.achievement-item {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.achievement-item:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.08);
+}
+
+.achievement-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 3px 15px rgba(0,0,0,0.3);
+    letter-spacing: -1px;
+}
+
+.achievement-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* 기대효과 그리드 */
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.benefit-item {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.benefit-item:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-8px);
+    border-color: #667eea;
+}
+
+.benefit-item i {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover i {
+    color: white;
+}
+
+.benefit-item h4 {
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    margin-bottom: 0.8rem;
+    transition: all 0.3s ease;
+    font-weight: 700;
+}
+
+.benefit-item:hover h4 {
+    color: white;
+}
+
+.benefit-item p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.8;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover p {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Footer 정보 */
+.about-footer {
+    background: white;
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+}
+
+.footer-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e8e8e8;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.05rem;
+    color: #444;
+}
+
+.info-item i {
+    color: #667eea;
+    font-size: 1.4rem;
+}
+
+.footer-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    background: #fff8e1;
+    padding: 1.8rem;
+    border-radius: 12px;
+    border-left: 5px solid #ffc107;
+}
+
+.footer-note i {
+    color: #f57f17;
+    font-size: 1.5rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.footer-note p {
+    color: #f57f17;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .about-header h2 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .about-subtitle {
+        font-size: 1rem;
+    }
+
+    .about-card {
+        padding: 1.5rem;
+    }
+
+    .card-content h3 {
+        font-size: 1.5rem;
+    }
+
+    .card-content p {
+        font-size: 1rem;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .achievement-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .achievement-number {
+        font-size: 2rem;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-container {
+        padding: 0 1rem;
+    }
+
+    .about-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .card-icon i {
+        font-size: 1.5rem;
+    }
+
+    .achievement-grid {
+        grid-template-columns: 1fr;
+    }
+}

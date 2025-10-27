@@ -5,9 +5,12 @@ function createTourRouteCard(route) {
     const daysNum = parseInt(route.duration);
     const priceFormatted = route.basePrice.toLocaleString('ko-KR');
     
+    const fallbackImage = getRouteImageUrl(route, 900, 500);
+    const bgUrl = route.image ? optimizeImageUrl(route.image, 900) : fallbackImage;
     return `
         <div class="tour-route-card" data-route-id="${route.id}">
-            <div class="tour-route-image" style="background-image: url('${route.image}')">
+            <div class="tour-route-image">
+                <img class="tour-route-img" src="${bgUrl}" alt="${escapeHtml(route.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="handleImageError(this, '${fallbackImage}')">
                 <div class="tour-route-badge">${route.duration}</div>
                 <div class="tour-route-countries">${route.countries.join(' → ')}</div>
             </div>
@@ -57,49 +60,62 @@ function displayTourRoutes(routes = TOUR_ROUTES) {
 
 // 투어 루트 상세 모달 표시
 function showRouteDetail(routeId) {
-    const route = TOUR_ROUTES.find(r => r.id === routeId);
-    if (!route) return;
-    
-    const modal = document.getElementById('productModal');
-    const modalBody = document.getElementById('modalBody');
-    
-    const itineraryHTML = route.itinerary.map(day => `
-        <div class="itinerary-day">
-            <div class="day-number">
-                <i class="fas fa-calendar-day"></i> Day ${day.day}
-            </div>
-            <div class="day-content">
-                <h4><i class="fas fa-map-marker-alt"></i> ${day.location}</h4>
-                ${day.parks.length > 0 ? `
-                    <div class="day-parks">
-                        <strong><i class="fas fa-ticket-alt"></i> 방문 파크:</strong>
-                        ${day.parks.map(park => `<span class="park-tag">${park}</span>`).join('')}
-                    </div>
-                ` : ''}
-                <div class="day-activities">
-                    <strong><i class="fas fa-star"></i> 주요 활동:</strong>
-                    <ul>
-                        ${day.activities.map(act => `<li>${act}</li>`).join('')}
+    try {
+        const route = TOUR_ROUTES.find(r => r.id === routeId);
+        if (!route) {
+            showToast('투어 정보를 찾을 수 없습니다.', 'error');
+            return;
+        }
+        
+        const modal = document.getElementById('productModal');
+        const modalBody = document.getElementById('modalBody');
+        
+        const itineraryHTML = route.itinerary.map(day => `
+            <div class="itinerary-day">
+                <div class="day-number">
+                    <i class="fas fa-calendar-day"></i> Day ${day.day}
+                </div>
+                <div class="day-content">
+                    <h4><i class="fas fa-map-marker-alt"></i> ${escapeHtml(day.location)}</h4>
+                    ${day.parks.length > 0 ? `
+                        <div class="day-parks">
+                            <strong><i class="fas fa-ticket-alt"></i> 방문 파크:</strong>
+                            ${day.parks.map(park => `<span class="park-tag">${escapeHtml(park)}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="day-activities">
+                        <strong><i class="fas fa-star"></i> 주요 활동:</strong>
+                        <ul>
+                        ${day.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
                     </ul>
                 </div>
                 <div class="day-info">
-                    <span><i class="fas fa-hotel"></i> ${day.accommodation}</span>
-                    <span><i class="fas fa-utensils"></i> ${day.meals.join(', ')}</span>
+                    <span><i class="fas fa-hotel"></i> ${escapeHtml(day.accommodation)}</span>
+                    <span><i class="fas fa-utensils"></i> ${day.meals.map(m => escapeHtml(m)).join(', ')}</span>
                 </div>
             </div>
         </div>
     `).join('');
     
+    // 이미지 최적화 및 fallback (투어 전용 무드 이미지)
+    const fallbackImage = `https://via.placeholder.com/1200x600/667eea/ffffff?text=${encodeURIComponent(route.name)}`;
+    const optimizedImage = route.image ? optimizeImageUrl(route.image, 1200) : getRouteImageUrl(route, 1200, 600);
+    
     modalBody.innerHTML = `
         <div class="route-modal-header">
-            <img src="${route.image}" alt="${route.name}" class="route-modal-image">
+            <img src="${optimizedImage}" 
+                 alt="${escapeHtml(route.name)}" 
+                 class="route-modal-image"
+                 loading="lazy"
+                 referrerpolicy="no-referrer"
+                 onerror="handleImageError(this, '${fallbackImage}')">
             <div class="route-modal-title">
-                <h2>${route.name}</h2>
-                <p>${route.description}</p>
+                <h2>${escapeHtml(route.name)}</h2>
+                <p>${escapeHtml(route.description)}</p>
                 <div class="route-modal-meta">
-                    <span class="meta-badge"><i class="fas fa-clock"></i> ${route.duration}</span>
-                    <span class="meta-badge"><i class="fas fa-globe"></i> ${route.countries.join(', ')}</span>
-                    <span class="meta-badge"><i class="fas fa-route"></i> ${route.totalDistance}</span>
+                    <span class="meta-badge"><i class="fas fa-clock"></i> ${escapeHtml(route.duration)}</span>
+                    <span class="meta-badge"><i class="fas fa-globe"></i> ${route.countries.map(c => escapeHtml(c)).join(', ')}</span>
+                    <span class="meta-badge"><i class="fas fa-route"></i> ${escapeHtml(route.totalDistance)}</span>
                 </div>
             </div>
         </div>
@@ -111,7 +127,7 @@ function showRouteDetail(routeId) {
                     ${route.highlights.map(h => `
                         <div class="highlight-item">
                             <i class="fas fa-check-circle"></i>
-                            <span>${h}</span>
+                            <span>${escapeHtml(h)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -127,14 +143,14 @@ function showRouteDetail(routeId) {
             <section class="modal-section">
                 <h3><i class="fas fa-check-double"></i> 포함 사항</h3>
                 <ul class="includes-list">
-                    ${route.includes.map(item => `<li><i class="fas fa-check"></i> ${item}</li>`).join('')}
+                    ${route.includes.map(item => `<li><i class="fas fa-check"></i> ${escapeHtml(item)}</li>`).join('')}
                 </ul>
             </section>
             
             <section class="modal-section">
                 <h3><i class="fas fa-times-circle"></i> 불포함 사항</h3>
                 <ul class="excludes-list">
-                    ${route.excludes.map(item => `<li><i class="fas fa-times"></i> ${item}</li>`).join('')}
+                    ${route.excludes.map(item => `<li><i class="fas fa-times"></i> ${escapeHtml(item)}</li>`).join('')}
                 </ul>
             </section>
             
@@ -143,7 +159,7 @@ function showRouteDetail(routeId) {
                 <div class="pricing-calculator">
                     <div class="price-base">
                         <span>기본 가격 (1인)</span>
-                        <strong>${route.basePrice.toLocaleString('ko-KR')}원</strong>
+                        <strong>${formatNumber(route.basePrice)}원</strong>
                     </div>
                     <div class="price-options">
                         <label>
@@ -165,7 +181,7 @@ function showRouteDetail(routeId) {
                     </div>
                     <div class="price-total">
                         <span>총 예상 비용</span>
-                        <strong id="routeTotalPrice">${(route.basePrice * 2).toLocaleString('ko-KR')}원</strong>
+                        <strong id="routeTotalPrice">${formatNumber(route.basePrice * 2)}원</strong>
                     </div>
                 </div>
             </section>
@@ -182,6 +198,47 @@ function showRouteDetail(routeId) {
     `;
     
     modal.style.display = 'block';
+    } catch (error) {
+        logError(error, { context: 'showRouteDetail', routeId });
+        showToast('투어 상세 정보를 불러오는 중 오류가 발생했습니다.', 'error');
+        const modalBody = document.getElementById('modalBody');
+        if (modalBody) {
+            modalBody.innerHTML = `
+                <div class="modal-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>오류 발생</h3>
+                    <p>투어 정보를 불러올 수 없습니다.</p>
+                    <button class="btn btn-primary" onclick="closeModal()">닫기</button>
+                </div>
+            `;
+        }
+    }
+}
+
+// 투어 루트 이미지 URL 생성: 디즈니 성/불꽃놀이/유니버설 무드
+function getRouteImageUrl(route, width = 1000, height = 560) {
+    const size = `${width}x${height}`;
+    const countries = route.countries || [];
+    const text = (route.highlights || []).join(' ').toLowerCase();
+
+    const hasDisney = /디즈니|disney/.test(route.name.toLowerCase() + ' ' + text);
+    const hasUniversal = /유니버설|universal/.test(route.name.toLowerCase() + ' ' + text);
+    const hasEurope = countries.some(c => ['프랑스','독일','네덜란드','덴마크'].includes(c));
+    const hasJapan = countries.some(c => ['일본'].includes(c));
+    const hasUs = countries.some(c => ['미국'].includes(c));
+    const hasHk = countries.some(c => ['홍콩'].includes(c));
+    const hasSg = countries.some(c => ['싱가포르'].includes(c));
+
+    if (hasDisney && hasUs) return `https://source.unsplash.com/${size}/?disneyland,castle,fireworks,night,california`;
+    if (hasDisney && hasJapan) return `https://source.unsplash.com/${size}/?tokyo-disneyland,castle,fireworks,night`;
+    if (hasDisney && hasEurope) return `https://source.unsplash.com/${size}/?disneyland-paris,castle,fireworks,night`;
+    if (hasUniversal && hasJapan) return `https://source.unsplash.com/${size}/?universal-studios-japan,harry-potter,night`;
+    if (hasUniversal && hasUs) return `https://source.unsplash.com/${size}/?universal,orlando,theme-park,night`;
+    if (hasHk && hasDisney) return `https://source.unsplash.com/${size}/?hong-kong-disneyland,castle,fireworks,night`;
+    if (hasSg && hasUniversal) return `https://source.unsplash.com/${size}/?universal-studios-singapore,night`;
+
+    // 기본: 야간 롤러코스터/불꽃놀이
+    return `https://source.unsplash.com/${size}/?theme-park,rollercoaster,fireworks,night`;
 }
 
 // 투어 가격 업데이트
@@ -260,215 +317,3 @@ function debounce(fn, delay) {
         t = setTimeout(() => fn.apply(this, args), delay);
     };
 }
-// ===== 투어 루트 표시 로직 =====
-
-// 투어 루트 카드 생성
-function createTourRouteCard(route) {
-    const daysNum = parseInt(route.duration);
-    const priceFormatted = route.basePrice.toLocaleString('ko-KR');
-    
-    return `
-        <div class="tour-route-card" data-route-id="${route.id}">
-            <div class="tour-route-image" style="background-image: url('${route.image}')">
-                <div class="tour-route-badge">${route.duration}</div>
-                <div class="tour-route-countries">${route.countries.join(' → ')}</div>
-            </div>
-            <div class="tour-route-content">
-                <h3>${route.name}</h3>
-                <p class="tour-route-description">${route.description}</p>
-                
-                <div class="tour-route-highlights">
-                    ${route.highlights.map(h => `<span class="highlight-badge"><i class="fas fa-check"></i> ${h}</span>`).join('')}
-                </div>
-                
-                <div class="tour-route-info">
-                    <div class="info-item">
-                        <i class="fas fa-globe"></i>
-                        <span>${route.countries.length}개국</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-route"></i>
-                        <span>${route.totalDistance}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-ticket-alt"></i>
-                        <span>${route.itinerary.filter(day => day.parks.length > 0).length}개 파크</span>
-                    </div>
-                </div>
-                
-                <div class="tour-route-price">
-                    <span class="price-label">1인 기준</span>
-                    <span class="price-amount">${priceFormatted}원~</span>
-                </div>
-                
-                <button class="view-route-btn" onclick="showRouteDetail('${route.id}')">
-                    <i class="fas fa-info-circle"></i> 상세 일정 보기
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-// 모든 투어 루트 표시
-function displayTourRoutes(routes = TOUR_ROUTES) {
-    const container = document.getElementById('tourRoutesGrid');
-    if (!container) return;
-    
-    container.innerHTML = routes.map(route => createTourRouteCard(route)).join('');
-}
-
-// 투어 루트 상세 모달 표시
-function showRouteDetail(routeId) {
-    const route = TOUR_ROUTES.find(r => r.id === routeId);
-    if (!route) return;
-    
-    const modal = document.getElementById('productModal');
-    const modalBody = document.getElementById('modalBody');
-    
-    const itineraryHTML = route.itinerary.map(day => `
-        <div class="itinerary-day">
-            <div class="day-number">
-                <i class="fas fa-calendar-day"></i> Day ${day.day}
-            </div>
-            <div class="day-content">
-                <h4><i class="fas fa-map-marker-alt"></i> ${day.location}</h4>
-                ${day.parks.length > 0 ? `
-                    <div class="day-parks">
-                        <strong><i class="fas fa-ticket-alt"></i> 방문 파크:</strong>
-                        ${day.parks.map(park => `<span class="park-tag">${park}</span>`).join('')}
-                    </div>
-                ` : ''}
-                <div class="day-activities">
-                    <strong><i class="fas fa-star"></i> 주요 활동:</strong>
-                    <ul>
-                        ${day.activities.map(act => `<li>${act}</li>`).join('')}
-                    </ul>
-                </div>
-                <div class="day-info">
-                    <span><i class="fas fa-hotel"></i> ${day.accommodation}</span>
-                    <span><i class="fas fa-utensils"></i> ${day.meals.join(', ')}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    modalBody.innerHTML = `
-        <div class="route-modal-header">
-            <img src="${route.image}" alt="${route.name}" class="route-modal-image">
-            <div class="route-modal-title">
-                <h2>${route.name}</h2>
-                <p>${route.description}</p>
-                <div class="route-modal-meta">
-                    <span class="meta-badge"><i class="fas fa-clock"></i> ${route.duration}</span>
-                    <span class="meta-badge"><i class="fas fa-globe"></i> ${route.countries.join(', ')}</span>
-                    <span class="meta-badge"><i class="fas fa-route"></i> ${route.totalDistance}</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="route-modal-body">
-            <section class="modal-section">
-                <h3><i class="fas fa-star"></i> 투어 하이라이트</h3>
-                <div class="highlights-grid">
-                    ${route.highlights.map(h => `
-                        <div class="highlight-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>${h}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </section>
-            
-            <section class="modal-section">
-                <h3><i class="fas fa-calendar-alt"></i> 상세 일정</h3>
-                <div class="itinerary-container">
-                    ${itineraryHTML}
-                </div>
-            </section>
-            
-            <section class="modal-section">
-                <h3><i class="fas fa-check-double"></i> 포함 사항</h3>
-                <ul class="includes-list">
-                    ${route.includes.map(item => `<li><i class="fas fa-check"></i> ${item}</li>`).join('')}
-                </ul>
-            </section>
-            
-            <section class="modal-section">
-                <h3><i class="fas fa-times-circle"></i> 불포함 사항</h3>
-                <ul class="excludes-list">
-                    ${route.excludes.map(item => `<li><i class="fas fa-times"></i> ${item}</li>`).join('')}
-                </ul>
-            </section>
-            
-            <section class="modal-section pricing-section">
-                <h3><i class="fas fa-calculator"></i> 가격 계산</h3>
-                <div class="pricing-calculator">
-                    <div class="price-base">
-                        <span>기본 가격 (1인)</span>
-                        <strong>${route.basePrice.toLocaleString('ko-KR')}원</strong>
-                    </div>
-                    <div class="price-options">
-                        <label>
-                            <input type="number" id="routePeople" min="1" value="2" onchange="updateRoutePrice('${route.id}')">
-                            <span>인원</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="routeUpgrade" onchange="updateRoutePrice('${route.id}')">
-                            <span>숙소 업그레이드 (+50만원/인)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="routeExpress" onchange="updateRoutePrice('${route.id}')">
-                            <span>익스프레스 패스 (+30만원/인)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="routeMeals" onchange="updateRoutePrice('${route.id}')">
-                            <span>전 식사 포함 (+10만원/일/인)</span>
-                        </label>
-                    </div>
-                    <div class="price-total">
-                        <span>총 예상 비용</span>
-                        <strong id="routeTotalPrice">${(route.basePrice * 2).toLocaleString('ko-KR')}원</strong>
-                    </div>
-                </div>
-            </section>
-            
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="alert('예약 문의: 1588-0000')">
-                    <i class="fas fa-phone"></i> 예약 문의
-                </button>
-                <button class="btn-secondary" onclick="alert('카카오톡 상담')">
-                    <i class="fas fa-comment"></i> 카카오톡 상담
-                </button>
-            </div>
-        </div>
-    `;
-    
-    modal.style.display = 'block';
-}
-
-// 투어 가격 업데이트
-function updateRoutePrice(routeId) {
-    const route = TOUR_ROUTES.find(r => r.id === routeId);
-    if (!route) return;
-    
-    const people = parseInt(document.getElementById('routePeople')?.value || 1);
-    const upgrade = document.getElementById('routeUpgrade')?.checked || false;
-    const express = document.getElementById('routeExpress')?.checked || false;
-    const meals = document.getElementById('routeMeals')?.checked || false;
-    
-    const totalCost = calculateRouteCost(route, people, {
-        upgradeAccommodation: upgrade,
-        expressPass: express,
-        mealPlan: meals ? 'full' : 'partial'
-    });
-    
-    const priceElement = document.getElementById('routeTotalPrice');
-    if (priceElement) {
-        priceElement.textContent = totalCost.toLocaleString('ko-KR') + '원';
-    }
-}
-
-// 초기화
-document.addEventListener('DOMContentLoaded', () => {
-    displayTourRoutes();
-});

@@ -1,0 +1,39 @@
+{
+  "name": "themepark-travel-guide",
+  "version": "1.0.0",
+  "description": "전 세계 테마파크 여행 상품 플랫폼",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix",
+    "optimize-images": "node scripts/optimize-images.js",
+    "build": "npm run lint && npm run optimize-images",
+    "deploy": "gh-pages -d .",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/themepark-travel-guide.git"
+  },
+  "keywords": [
+    "theme-park",
+    "travel",
+    "tourism",
+    "korea",
+    "japan",
+    "disney"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "gh-pages": "^6.0.0",
+    "live-server": "^1.2.2",
+    "sharp": "^0.32.6"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

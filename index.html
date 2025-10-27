@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="statistics.css">
 </head>
 <body>
     <!-- 헤더 -->
@@ -17,30 +19,253 @@
                 <h1>테마파크 여행 프로그램</h1>
             </div>
             <nav class="nav">
+                <a href="#about">About</a>
                 <a href="#tour-routes">투어 루트</a>
                 <a href="#packages">여행 상품</a>
+                <a href="#statistics">통계</a>
                 <a href="#planner">일정 짜기</a>
-                <a href="#guide">여행 가이드</a>
             </nav>
+            <div class="currency-selector">
+                <i class="fas fa-exchange-alt"></i>
+                <select id="currencySelect" onchange="changeCurrency(this.value)">
+                    <option value="KRW">₩ KRW</option>
+                    <option value="USD">$ USD</option>
+                    <option value="JPY">¥ JPY</option>
+                    <option value="EUR">€ EUR</option>
+                    <option value="CNY">¥ CNY</option>
+                    <option value="GBP">£ GBP</option>
+                </select>
+            </div>
         </div>
     </header>
 
     <!-- 히어로 섹션 -->
     <section class="hero">
         <div class="hero-content">
-            <h2>🎢 세계 최고의 테마파크로 떠나는 특별한 여행</h2>
-            <p>에버랜드부터 디즈니랜드까지, 꿈같은 테마파크 여행을 지금 예약하세요!</p>
-            <a href="#packages" class="cta-button">여행 상품 보기 <i class="fas fa-arrow-down"></i></a>
+            <h2>✨ 어른이 된 우리에게도 마법은 존재합니다</h2>
+            <p>어린 시절 꿈꾸던 그곳, 웃음과 감동이 가득한 하루를 선물하세요</p>
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
         </div>
     </section>
 
     <div class="main-container">
+        <!-- About 섹션 -->
+        <section id="about" class="about-section">
+            <div class="about-container">
+                <div class="about-header">
+                    <h2><i class="fas fa-info-circle"></i> 프로젝트 소개</h2>
+                    <p class="about-subtitle">테마파크 월드투어 웹사이트 - 관광자원론 적용 사례</p>
+                </div>
+
+                <div class="about-content">
+                    <!-- 프로젝트 개요 -->
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>프로젝트 목적</h3>
+                            <p>본 웹사이트는 <strong>관광자원론 수업</strong>의 일환으로 제작된 테마파크 관광 상품 안내 플랫폼입니다. 전 세계 주요 테마파크를 대상으로 관광자원의 특성, 경제적 파급효과, 그리고 관광 산업의 트렌드를 분석하고 시각화하여 제공합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- 관광자원론 이론 적용 -->
+                    <div class="about-card highlight">
+                        <div class="card-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>관광자원론 이론 적용</h3>
+                            <div class="theory-list">
+                                <div class="theory-item">
+                                    <div class="theory-badge">관광자원 분류</div>
+                                    <p>테마파크를 <strong>인공 관광자원</strong>으로 분류하고, 판타지/영화/모험 등 6가지 테마로 세분화하여 분석했습니다.</p>
+                                </div>
+                                <div class="theory-item">
+                                    <div class="theory-badge">관광 매력성</div>
+                                    <p>각 테마파크의 <strong>독창성, 접근성, 편의성</strong>을 평가하고 TOP 10 순위를 통해 글로벌 경쟁력을 비교했습니다.</p>
+                                </div>
+                                <div class="theory-item">
+                                    <div class="theory-badge">경제적 파급효과</div>
+                                    <p>테마파크 산업이 창출하는 <strong>직·간접 수익($147B)</strong>과 일자리(350만 개)를 정량적으로 분석했습니다.</p>
+                                </div>
+                                <div class="theory-item">
+                                    <div class="theory-badge">지리적 분포</div>
+                                    <p>15개국 475개 테마파크의 <strong>공간적 분포</strong>를 버블 맵으로 시각화하여 지역별 발달 양상을 파악했습니다.</p>
+                                </div>
+                                <div class="theory-item">
+                                    <div class="theory-badge">시간적 변화</div>
+                                    <p>COVID-19 팬데믹 전후 방문객 추이를 분석하여 <strong>관광 산업의 회복 탄력성</strong>을 검증했습니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2열 레이아웃 -->
+                    <div class="about-grid">
+                        <!-- 주요 기능 -->
+                        <div class="about-card">
+                            <div class="card-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>주요 기능</h3>
+                                <ul class="feature-list">
+                                    <li><i class="fas fa-check-circle"></i> <strong>투어 루트 시스템</strong> - 멀티 국가 패키지 상품</li>
+                                    <li><i class="fas fa-check-circle"></i> <strong>상세 일정표</strong> - Day별 활동, 식사, 숙박 정보</li>
+                                    <li><i class="fas fa-check-circle"></i> <strong>실시간 검색</strong> - 테마파크/투어 통합 검색</li>
+                                    <li><i class="fas fa-check-circle"></i> <strong>비용 계산기</strong> - 인원/옵션별 맞춤 견적</li>
+                                    <li><i class="fas fa-check-circle"></i> <strong>통계 대시보드</strong> - 7가지 인터랙티브 차트</li>
+                                    <li><i class="fas fa-check-circle"></i> <strong>API 연동</strong> - 날씨, 환율, 파크 정보</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 기술 스택 -->
+                        <div class="about-card">
+                            <div class="card-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>기술 스택</h3>
+                                <ul class="tech-list">
+                                    <li>
+                                        <span class="tech-category">Frontend</span>
+                                        <span class="tech-items">HTML5, CSS3, JavaScript (Vanilla)</span>
+                                    </li>
+                                    <li>
+                                        <span class="tech-category">API</span>
+                                        <span class="tech-items">OpenWeather, ExchangeRate, ThemeParks Wiki</span>
+                                    </li>
+                                    <li>
+                                        <span class="tech-category">Data Viz</span>
+                                        <span class="tech-items">SVG Charts, CSS Animations</span>
+                                    </li>
+                                    <li>
+                                        <span class="tech-category">Security</span>
+                                        <span class="tech-items">XSS Prevention (escapeHtml)</span>
+                                    </li>
+                                    <li>
+                                        <span class="tech-category">Storage</span>
+                                        <span class="tech-items">LocalStorage, Cache API</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 프로젝트 성과 -->
+                    <div class="about-card success">
+                        <div class="card-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>프로젝트 성과</h3>
+                            <div class="achievement-grid">
+                                <div class="achievement-item">
+                                    <div class="achievement-number">6</div>
+                                    <div class="achievement-label">테마파크 패키지</div>
+                                </div>
+                                <div class="achievement-item">
+                                    <div class="achievement-number">12</div>
+                                    <div class="achievement-label">월드 투어 루트</div>
+                                </div>
+                                <div class="achievement-item">
+                                    <div class="achievement-number">28</div>
+                                    <div class="achievement-label">일정 데이터</div>
+                                </div>
+                                <div class="achievement-item">
+                                    <div class="achievement-number">475</div>
+                                    <div class="achievement-label">글로벌 파크 분석</div>
+                                </div>
+                                <div class="achievement-item">
+                                    <div class="achievement-number">7</div>
+                                    <div class="achievement-label">인터랙티브 차트</div>
+                                </div>
+                                <div class="achievement-item">
+                                    <div class="achievement-number">100%</div>
+                                    <div class="achievement-label">반응형 디자인</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기대효과 -->
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>기대효과 및 활용방안</h3>
+                            <div class="benefits-grid">
+                                <div class="benefit-item">
+                                    <i class="fas fa-users"></i>
+                                    <h4>여행자</h4>
+                                    <p>한눈에 비교 가능한 패키지 정보로 의사결정 지원</p>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-building"></i>
+                                    <h4>여행사</h4>
+                                    <p>데이터 기반 상품 기획 및 가격 정책 수립</p>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h4>교육기관</h4>
+                                    <p>관광산업 트렌드 분석 및 실무 교육 자료</p>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h4>연구자</h4>
+                                    <p>테마파크 산업의 정량적 데이터 제공</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제작 정보 -->
+                    <div class="about-footer">
+                        <div class="footer-info">
+                            <div class="info-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span><strong>제작 기간:</strong> 2025년 1월</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span><strong>제작자:</strong> 관광자원론 수강생</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-flask"></i>
+                                <span><strong>목적:</strong> 관광자원론 과제 (데모 웹사이트)</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span><strong>버전:</strong> v1.2.0</span>
+                            </div>
+                        </div>
+                        <div class="footer-note">
+                            <i class="fas fa-info-circle"></i>
+                            <p>본 웹사이트는 교육 목적의 데모 프로젝트로, 실제 예약 및 결제 기능은 제공되지 않습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 감성 구분선 1 -->
+        <div class="magic-divider">
+            <div class="divider-icon">🎠</div>
+            <p class="divider-text">모든 순간이 특별한 추억이 됩니다</p>
+            <div class="divider-line"></div>
+        </div>
+
         <!-- 여행 상품 리스트 (메인) -->
         <!-- 투어 루트 섹션 (상단으로 이동) -->
         <section id="tour-routes" class="tour-routes-section">
             <div class="section-header">
                 <h2><i class="fas fa-route"></i> 테마파크 월드 투어</h2>
-                <p>여러 나라의 테마파크를 한번에! 특별한 루트 여행</p>
+                <p>세계 곳곳의 마법을 하나의 여정으로</p>
             </div>
 
             <!-- 필터 바 -->
@@ -101,107 +326,173 @@
             </div>
         </section>
 
+        <!-- 감성 구분선 2 -->
+        <div class="magic-divider">
+            <div class="divider-icon">🎡</div>
+            <p class="divider-text">당신만의 완벽한 여행을 설계하세요</p>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- 사용자 일정 짜기 -->
+        <section id="planner" class="planner-section-full">
+            <div class="planner-container">
+                <div class="planner-header">
+                    <h2><i class="fas fa-calendar-alt"></i> 나만의 여행 일정 만들기</h2>
+                    <p>꿈꾸던 순간, 지금 계획을 세워보세요</p>
+                </div>
+
+                <form class="planner-form" id="plannerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> 출발지</label>
+                            <input type="text" id="departure" placeholder="예: 서울" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marked-alt"></i> 테마파크 선택</label>
+                            <select id="destination" required>
+                                <option value="">선택하세요</option>
+                                <option value="everland">에버랜드 (한국)</option>
+                                <option value="lotte-world">롯데월드 (한국)</option>
+                                <option value="disneyland-tokyo">도쿄 디즈니랜드 (일본)</option>
+                                <option value="universal-osaka">유니버설 스튜디오 오사카 (일본)</option>
+                                <option value="disneyland-california">디즈니랜드 캘리포니아 (미국)</option>
+                                <option value="universal-orlando">유니버설 올랜도 (미국)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> 출발일</label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> 도착일</label>
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-plane"></i> 교통수단</label>
+                            <select id="transport" required>
+                                <option value="flight">항공편</option>
+                                <option value="train">기차</option>
+                                <option value="bus">버스</option>
+                                <option value="car">자가용</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-hotel"></i> 숙박 유형</label>
+                            <select id="accommodation" required>
+                                <option value="5star">5성급 호텔</option>
+                                <option value="4star">4성급 호텔</option>
+                                <option value="3star">3성급 호텔</option>
+                                <option value="resort">리조트</option>
+                                <option value="airbnb">에어비앤비</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> 인원</label>
+                            <input type="number" id="people" min="1" value="2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-utensils"></i> 1인당 식비 예산 (원/일)</label>
+                            <input type="number" id="mealBudget" placeholder="70000" value="70000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="includeVisa">
+                                <span>비자 필요</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="includeInsurance">
+                                <span>여행자 보험 포함</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-calculator"></i> 예상 비용 계산하기
+                    </button>
+                </form>
+
+                <div class="estimate-result" id="estimateResult" style="display: none;">
+                    <h4><i class="fas fa-receipt"></i> 예상 비용</h4>
+                    <div class="cost-breakdown" id="costBreakdown"></div>
+                    <div class="total-cost" id="totalCost"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 통계 & 인포그래픽 섹션 -->
+        <section id="statistics" class="statistics-section">
+            <div class="statistics-container">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> 글로벌 테마파크 통계 & 인사이트</h2>
+                    <p>데이터로 보는 세계 테마파크 산업</p>
+                </div>
+
+                <!-- 국가별 분포 지도 -->
+                <div id="worldMap"></div>
+
+                <!-- 2열 레이아웃 -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                    <!-- 연도별 방문객 차트 -->
+                    <div id="visitorChart"></div>
+
+                    <!-- 계절별 분포 -->
+                    <div id="seasonalChart"></div>
+                </div>
+
+                <!-- TOP 10 파크 -->
+                <div id="topParksChart"></div>
+
+                <!-- 테마별 분포 도넛 차트 -->
+                <div id="themeChart"></div>
+
+                <!-- 재미있는 사실 -->
+                <div id="funFacts"></div>
+
+                <!-- 경제적 영향 -->
+                <div id="economicImpact"></div>
+            </div>
+        </section>
+
+        <!-- 감성 CTA 배너 -->
+        <section class="emotional-cta-section">
+            <div class="emotional-cta-container">
+                <div class="emotional-cta-content">
+                    <div class="cta-icon">✨</div>
+                    <h3>지금 이 순간도 누군가는 꿈을 이루고 있습니다</h3>
+                    <p>당신의 이야기를 시작할 차례예요</p>
+                    <button class="emotional-cta-button" onclick="document.getElementById('planner').scrollIntoView({behavior: 'smooth'})">
+                        <i class="fas fa-heart"></i> 상담 신청하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
         
 
-        <!-- 사용자 일정 짜기 (사이드바) -->
-        <aside id="planner" class="planner-section">
-            <div class="planner-header">
-                <h3><i class="fas fa-calendar-alt"></i> 나만의 여행 일정 만들기</h3>
-                <p>예산과 일정에 맞는 완벽한 여행 계획</p>
-            </div>
-
-            <form class="planner-form" id="plannerForm">
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> 출발지</label>
-                    <input type="text" id="departure" placeholder="예: 서울" required>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-map-marked-alt"></i> 테마파크 선택</label>
-                    <select id="destination" required>
-                        <option value="">선택하세요</option>
-                        <option value="everland">에버랜드 (한국)</option>
-                        <option value="disneyland-tokyo">도쿄 디즈니랜드 (일본)</option>
-                        <option value="universal-osaka">유니버설 스튜디오 오사카 (일본)</option>
-                        <option value="disneyland-california">디즈니랜드 캘리포니아 (미국)</option>
-                        <option value="universal-orlando">유니버설 올랜도 (미국)</option>
-                    </select>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> 출발일</label>
-                        <input type="date" id="startDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar-check"></i> 도착일</label>
-                        <input type="date" id="endDate" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-plane"></i> 교통수단</label>
-                    <select id="transport" required>
-                        <option value="flight">항공편</option>
-                        <option value="train">기차</option>
-                        <option value="bus">버스</option>
-                        <option value="car">자가용</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-hotel"></i> 숙박 유형</label>
-                    <select id="accommodation" required>
-                        <option value="5star">5성급 호텔</option>
-                        <option value="4star">4성급 호텔</option>
-                        <option value="3star">3성급 호텔</option>
-                        <option value="resort">리조트</option>
-                        <option value="airbnb">에어비앤비</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-users"></i> 인원</label>
-                    <input type="number" id="people" min="1" value="2" required>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-utensils"></i> 1인당 식비 예산</label>
-                    <input type="number" id="mealBudget" placeholder="50000" required>
-                    <small>원/일</small>
-                </div>
-
-                <div class="form-group checkbox-group">
-                    <label>
-                        <input type="checkbox" id="includeVisa">
-                        <span>비자 필요</span>
-                    </label>
-                </div>
-
-                <div class="form-group checkbox-group">
-                    <label>
-                        <input type="checkbox" id="includeInsurance">
-                        <span>여행자 보험 포함</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="submit-button">
-                    <i class="fas fa-calculator"></i> 예상 비용 계산하기
-                </button>
-            </form>
-
-            <div class="estimate-result" id="estimateResult" style="display: none;">
-                <h4><i class="fas fa-receipt"></i> 예상 비용</h4>
-                <div class="cost-breakdown" id="costBreakdown"></div>
-                <div class="total-cost" id="totalCost"></div>
-            </div>
-        </aside>
     </div>
 
     <!-- 상품 상세 모달 -->
     <div class="modal" id="productModal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeModal()" aria-label="닫기" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') closeModal()">&times;</span>
             <div id="modalBody"></div>
         </div>
     </div>
@@ -219,9 +510,12 @@
 
     <!-- 스크립트 -->
     <script src="config.js"></script>
+    <script src="utils.js"></script>
     <script src="api.js"></script>
+    <script src="statistics.js"></script>
     <script src="tour-routes.js"></script>
     <script src="tour-display.js"></script>
+    <script src="search.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
