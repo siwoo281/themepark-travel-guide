@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 맨 위로 스크롤 확실히 적용
     window.scrollTo(0, 0);
 
-    // 외부 API(위키피디아/위키미디어)로 디즈니 성 이미지 시도 후 실패 시 Base64 유지
+    // 히어로 이미지: 사용자가 지정한 URL이 있으면 최우선 적용, 실패 시 자동 탐색 체인으로 폴백
     // 페이지 초기 렌더를 지연시키지 않도록 await 없이 실행
-    setHeroImageFromWikipedia();
+    tryApplyUserHeroImageOrFallback();
     
     // 환율 데이터 로드
     await loadExchangeRates();
@@ -118,6 +118,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         hideLoadingSkeleton();
     }
 });
+
+// 히어로 이미지 사용자 지정 우선 적용 로직
+function tryApplyUserHeroImageOrFallback() {
+    const heroImg = document.querySelector('.hero .hero-bg-img img');
+    const heroSection = document.querySelector('.hero');
+    if (!heroImg) return setHeroImageFromWikipedia();
+
+    // 기존 Base64를 폴백으로 기억
+    const fallbackSrc = heroImg.getAttribute('data-fallback-src') || heroImg.getAttribute('src') || '';
+    if (fallbackSrc && !heroImg.getAttribute('data-fallback-src')) {
+        heroImg.setAttribute('data-fallback-src', fallbackSrc);
+    }
+
+    // 쿼리 파라미터 우선
+    const params = new URLSearchParams(window.location.search);
+    const qp = params.get('hero') || params.get('heroImg') || params.get('image');
+    const allowQP = window.CONFIG?.HERO?.allowQueryOverride !== false;
+
+    // 설정값 다음
+    const cfg = window.CONFIG?.HERO?.preferredUrl || '';
+
+    const userUrl = (allowQP && qp) ? qp : (cfg || '');
+
+    if (userUrl) {
+        console.log('🖼️ 사용자 지정 히어로 이미지 적용 시도:', userUrl);
+        heroImg.referrerPolicy = 'no-referrer';
+        heroImg.crossOrigin = 'anonymous';
+        heroImg.decoding = 'async';
+        heroImg.loading = 'eager';
+        heroImg.onerror = () => {
+            console.warn('⚠️ 사용자 지정 이미지 로드 실패. 자동 탐색으로 폴백합니다:', userUrl);
+            // 자동 체인으로 폴백
+            setHeroImageFromWikipedia();
+        };
+        heroImg.onload = () => {
+            // 배경 레이어도 동일 이미지로 맞춰 redundancy 강화
+            try {
+                if (heroSection) {
+                    heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${userUrl}')`;
+                    heroSection.style.backgroundSize = 'cover';
+                    heroSection.style.backgroundPosition = 'center';
+                }
+            } catch (_) { /* noop */ }
+            console.log('✅ 사용자 지정 히어로 이미지 적용 성공');
+        };
+        heroImg.src = userUrl;
+        return;
+    }
+
+    // 사용자 지정이 없으면 자동 탐색 체인 실행
+    setHeroImageFromWikipedia();
+}
 
 // 공통: 순차 후보 URL을 시도하며 실패 시 다음 후보로 넘어가기
 function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {

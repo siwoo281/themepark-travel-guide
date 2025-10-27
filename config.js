@@ -18,6 +18,15 @@ const CONFIG = {
         // GitHub Pages에서는 환경변수 사용 불가하므로 public API만 사용
     },
     
+    // 히어로 이미지 사용자 지정 옵션
+    HERO: {
+        // 우선순위 1: URL 쿼리 파라미터 ?hero=... (allowQueryOverride=true일 때)
+        // 우선순위 2: 아래 preferredUrl 값
+        // 우선순위 3: 외부 API(위키/스톡) 자동 탐색 → Base64 폴백
+        preferredUrl: (window.ENV?.HERO_IMAGE_URL || ''),
+        allowQueryOverride: true
+    },
+    
     // 캐시 설정
     CACHE: {
         TTL: 6 * 60 * 60 * 1000, // 6시간
