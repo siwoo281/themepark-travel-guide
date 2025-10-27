@@ -31,7 +31,7 @@ const CONFIG = {
             lat: 37.2942,
             lon: 127.2017,
             description: '한국 최대 규모의 테마파크! 사계절 내내 다양한 축제와 놀이기구를 즐길 수 있습니다.',
-            image: 'https://cdn.visitkorea.or.kr/img/call?cmd=VIEW&id=ce4a8cd0-f1d8-4a3e-9abc-3e4e2e3b2b89_8.jpg',
+            image: 'https://i.postimg.cc/6pmGPgJc/everland-texpresscoaster.jpg',
             basePrice: 280000, // 입장권 62,000원 + 리조트 1박(120,000원) + 식사 및 기타(98,000원)
             includes: ['입장권 (1일권)', '에버랜드 리조트 1박', '조식 1회'],
             duration: '1박 2일',
@@ -82,7 +82,7 @@ const CONFIG = {
             lat: 37.5111,
             lon: 127.0981,
             description: '실내외 테마파크가 결합된 도심 속 놀이공원. 민속박물관도 함께 즐길 수 있습니다.',
-            image: 'https://www.lotteworld.com/image/2019/5/20190502095140471_CFQEWQHD.jpg',
+            image: 'https://i.postimg.cc/8PnXNYSN/lotte-world-gyrodrop.jpg',
             basePrice: 68000, // 종합이용권 1일권 (성인 기준)
             includes: ['입장권 (1일 종합이용권)', '민속박물관 무료 입장'],
             duration: '당일',
@@ -119,7 +119,7 @@ const CONFIG = {
             lat: 35.6329,
             lon: 139.8804,
             description: '일본 최고의 테마파크! 디즈니의 마법 같은 세계를 경험하세요.',
-            image: 'https://www.tokyodisneyresort.jp/common/img/castle.jpg',
+            image: 'https://i.postimg.cc/Jz8mXQHs/tokyo-disneyland-castle.jpg',
             basePrice: 1850000, // 항공(60만) + 호텔2박(40만) + 입장권2일(20만) + 식사교통(35만)
             includes: ['왕복 항공권 (인천-나리타)', '디즈니 앰배서더 호텔 2박', '2일 입장권', '조식 2회'],
             duration: '3박 4일',
@@ -207,7 +207,7 @@ const CONFIG = {
             lat: 34.6654,
             lon: 135.4321,
             description: '해리포터 월드와 슈퍼 닌텐도 월드가 있는 최고의 테마파크!',
-            image: 'https://www.usj.co.jp/common/img/area/wizarding-world/castle.jpg',
+            image: 'https://i.postimg.cc/vmLhgzTp/usj-hogwarts-castle.jpg',
             basePrice: 1950000, // 항공(65만) + 호텔2박(45만) + 입장권+패스(35만) + 식사교통(40만)
             includes: ['왕복 항공권 (인천-간사이)', 'USJ 파트너 호텔 2박', '2일 입장권', '익스프레스 패스 7', '조식 2회'],
             duration: '3박 4일',
@@ -293,7 +293,7 @@ const CONFIG = {
             lat: 33.8121,
             lon: -117.9190,
             description: '월트 디즈니가 직접 만든 최초의 디즈니랜드! 클래식한 매력이 가득합니다.',
-            image: 'https://d23.com/app/uploads/2019/03/1180w-600h_030319_sleeping-beauty-castle-disneyland.jpg',
+            image: 'https://i.postimg.cc/P5yNFjKd/disneyland-california-castle.jpg',
             basePrice: 4800000, // 항공(220만) + 호텔4박(120만) + 입장권3일(35만) + 식사교통렌트(105만)
             includes: ['왕복 항공권 (인천-LAX)', '디즈니랜드 리조트 호텔 4박', '3일 파크 호퍼 티켓', '조식 4회'],
             duration: '5박 6일',
@@ -412,7 +412,7 @@ const CONFIG = {
             lat: 28.4743,
             lon: -81.4677,
             description: '해리포터의 세계로 떠나는 마법 같은 여행! 3개 테마파크를 한번에!',
-            image: 'https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=600',
+            image: 'https://i.postimg.cc/Y9w1zG3p/universal-orlando-entrance.jpg',
             basePrice: 5600000, // 항공(280만) + 호텔5박(150만) + 입장권+패스4일(60만) + 식사교통(110만)
             includes: ['왕복 항공권 (인천-올랜도)', '유니버설 리조트 호텔 5박', '4일 3파크 티켓', '익스프레스 패스', '조식 5회'],
             duration: '6박 7일',
