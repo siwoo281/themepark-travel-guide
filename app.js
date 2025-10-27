@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 페이지 초기 렌더를 지연시키지 않도록 await 없이 실행
     tryApplyUserHeroImageOrFallback();
     
+    // 마지막 업데이트 배지 표시 (티켓 가격 자동화 타임스탬프)
+    try { renderLastUpdateBadge(); } catch (_) { /* noop */ }
+
     // 환율 데이터 로드
     await loadExchangeRates();
     
@@ -118,6 +121,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         hideLoadingSkeleton();
     }
 });
+
+// 마지막 업데이트 배지 렌더링
+function renderLastUpdateBadge() {
+    const updatedAt = window.CONFIG?.TICKET_PRICES_UPDATED_AT;
+    if (!updatedAt) return;
+
+    // 표시 위치: 패키지 섹션 헤더 하단
+    const header = document.querySelector('#packages .section-header');
+    if (!header) return;
+
+    // 기존 배지 제거 후 다시 생성 (중복 방지)
+    const existing = header.querySelector('.last-update-badge');
+    if (existing) existing.remove();
+
+    const badge = document.createElement('div');
+    badge.className = 'last-update-badge';
+    const dt = new Date(updatedAt);
+    // 로컬 시간 포맷 (ko-KR)
+    const formatted = isNaN(dt.getTime()) ? String(updatedAt) : dt.toLocaleString('ko-KR', { hour12: false });
+    badge.innerHTML = `<i class="fas fa-clock"></i> 티켓 가격 데이터 업데이트: <strong>${formatted}</strong>`;
+    badge.style.fontSize = '0.9rem';
+    badge.style.color = '#555';
+    badge.style.marginTop = '0.25rem';
+
+    header.appendChild(badge);
+}
 
 // 히어로 이미지 사용자 지정 우선 적용 로직
 function tryApplyUserHeroImageOrFallback() {
@@ -796,28 +825,35 @@ async function calculateEstimate() {
         let admissionCost = 65000; // 기본 입장료 (한국 테마파크 기준)
         
         if (park) {
-            // 테마파크별 실제 입장료
-            switch(park.id) {
-                case 'everland':
-                    admissionCost = 62000; // 에버랜드 종일권
-                    break;
-                case 'lotte-world':
-                    admissionCost = 68000; // 롯데월드 종합이용권
-                    break;
-                case 'disneyland-tokyo':
-                    admissionCost = 110000 * days; // 도쿄 디즈니 (10,900엔 x 환율 10)
-                    break;
-                case 'universal-osaka':
-                    admissionCost = 130000 * days; // USJ + 익스프레스 패스
-                    break;
-                case 'disneyland-california':
-                    admissionCost = 180000 * Math.min(days, 3); // 디즈니랜드 ($135 x 환율)
-                    break;
-                case 'universal-orlando':
-                    admissionCost = 200000 * Math.min(days, 4); // 유니버설 올랜도 ($150 x 환율)
-                    break;
-                default:
-                    admissionCost = 65000;
+            // 1) CONFIG.TICKET_PRICES 오버라이드가 있으면 우선 적용 (1일권 기준, 원화)
+            const override = window.CONFIG?.TICKET_PRICES?.[park.id];
+            if (typeof override === 'number' && isFinite(override) && override > 0) {
+                // 체류 일수 기준 단순 합산 (특정 파크는 멀티데이 할인 등이 있으나 단순 모델로 처리)
+                admissionCost = Math.round(override * Math.max(1, days));
+            } else {
+                // 2) 오버라이드가 없으면 기존 하드코딩된 대략값 사용
+                switch(park.id) {
+                    case 'everland':
+                        admissionCost = 62000; // 에버랜드 종일권
+                        break;
+                    case 'lotte-world':
+                        admissionCost = 68000; // 롯데월드 종합이용권
+                        break;
+                    case 'disneyland-tokyo':
+                        admissionCost = 110000 * days; // 도쿄 디즈니 (대략 환산)
+                        break;
+                    case 'universal-osaka':
+                        admissionCost = 130000 * days; // USJ + 익스프레스 패스 추정
+                        break;
+                    case 'disneyland-california':
+                        admissionCost = 180000 * Math.min(days, 3); // 디즈니랜드 ($135 x 환율) 추정
+                        break;
+                    case 'universal-orlando':
+                        admissionCost = 200000 * Math.min(days, 4); // 유니버설 올랜도 ($150 x 환율) 추정
+                        break;
+                    default:
+                        admissionCost = 65000;
+                }
             }
         }
         

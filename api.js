@@ -174,6 +174,15 @@ class ThemeParkAPI {
 
     // 가격 계산 (환율 적용)
     async calculatePrice(park) {
+        // 1) 크롤링으로 주입된 오버라이드 가격이 있으면 최우선 사용 (원화 기준)
+        try {
+            const override = window.CONFIG?.TICKET_PRICES?.[park.id];
+            if (typeof override === 'number' && isFinite(override) && override > 0) {
+                return Math.round(override);
+            }
+        } catch (_) { /* noop */ }
+
+        // 2) 없으면 기존 로직 사용
         let price = park.basePrice;
 
         // 외화인 경우 환율 적용

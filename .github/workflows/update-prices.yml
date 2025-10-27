@@ -1,0 +1,71 @@
+name: 자동 가격 업데이트
+
+on:
+  schedule:
+    # 매일 오전 6시 (KST 기준)
+    - cron: '0 21 * * *'  # UTC 21:00 = KST 06:00
+  workflow_dispatch:  # 수동 실행도 가능
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    concurrency:
+      group: update-prices
+      cancel-in-progress: false
+    
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v3
+        
+      - name: Node.js 설정
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            package.json
+      
+      - name: Python 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Pip 캐시 설정
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: 의존성 설치
+        run: |
+          pip install -r requirements.txt
+          npm install
+      
+      - name: 가격 크롤링 실행
+        run: python scripts/crawl-prices.py
+      
+      - name: config.js 업데이트
+        run: node scripts/update-config.js
+      
+      - name: 결과 아티팩트 업로드 (prices-data.json)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prices-data
+          path: prices-data.json
+
+      - name: 변경사항 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config.js prices-data.json
+          git diff --quiet && git diff --staged --quiet || \
+          git commit -m "🤖 자동 가격 업데이트 $(date +%Y-%m-%d)"
+          git push

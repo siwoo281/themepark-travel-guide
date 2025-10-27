@@ -1,3 +1,4 @@
+// 마지막 업데이트: 2025-10-27T22:38:52.073976
 // ===== 설정 파일 =====
 
 const CONFIG = {
@@ -44,7 +45,7 @@ const CONFIG = {
             lon: 127.2017,
             description: '한국 최대 규모의 테마파크! 사계절 내내 다양한 축제와 놀이기구를 즐길 수 있습니다.',
             image: 'https://i.postimg.cc/6pmGPgJc/everland-texpresscoaster.jpg',
-            basePrice: 280000, // 입장권 62,000원 + 리조트 1박(120,000원) + 식사 및 기타(98,000원)
+            basePrice: 45000, // 입장권 62,000원 + 리조트 1박(120,000원) + 식사 및 기타(98,000원)
             includes: ['입장권 (1일권)', '에버랜드 리조트 1박', '조식 1회'],
             duration: '1박 2일',
             currency: 'KRW',
@@ -132,7 +133,7 @@ const CONFIG = {
             lon: 139.8804,
             description: '일본 최고의 테마파크! 디즈니의 마법 같은 세계를 경험하세요.',
             image: 'https://i.postimg.cc/Jz8mXQHs/tokyo-disneyland-castle.jpg',
-            basePrice: 1850000, // 항공(60만) + 호텔2박(40만) + 입장권2일(20만) + 식사교통(35만)
+            basePrice: 115000, // 항공(60만) + 호텔2박(40만) + 입장권2일(20만) + 식사교통(35만)
             includes: ['왕복 항공권 (인천-나리타)', '디즈니 앰배서더 호텔 2박', '2일 입장권', '조식 2회'],
             duration: '3박 4일',
             currency: 'JPY',
@@ -220,7 +221,7 @@ const CONFIG = {
             lon: 135.4321,
             description: '해리포터 월드와 슈퍼 닌텐도 월드가 있는 최고의 테마파크!',
             image: 'https://i.postimg.cc/vmLhgzTp/usj-hogwarts-castle.jpg',
-            basePrice: 1950000, // 항공(65만) + 호텔2박(45만) + 입장권+패스(35만) + 식사교통(40만)
+            basePrice: 108444, // 항공(65만) + 호텔2박(45만) + 입장권+패스(35만) + 식사교통(40만)
             includes: ['왕복 항공권 (인천-간사이)', 'USJ 파트너 호텔 2박', '2일 입장권', '익스프레스 패스 7', '조식 2회'],
             duration: '3박 4일',
             currency: 'JPY',
@@ -574,4 +575,14 @@ const CONFIG = {
 };
 
 // 전역으로 export
+// 자동 티켓 가격 (KRW) - 자동 생성, 수정 금지
+
+// 자동 티켓 가격 (KRW) - 자동 생성, 수정 금지
+CONFIG.TICKET_PRICES = {
+  "disneyland-tokyo": 115000,
+  "universal-osaka": 108444,
+  "everland": 45000
+};
+CONFIG.TICKET_PRICES_UPDATED_AT = "2025-10-27T22:38:52.073976";
+
 window.CONFIG = CONFIG;

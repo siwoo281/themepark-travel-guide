@@ -1,0 +1,177 @@
+/* 대기 시간 디스플레이 스타일 */
+.wait-times-container {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.wait-times-header {
+    margin-bottom: 2rem;
+}
+
+.wait-times-header h2 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.wait-times-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ride-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.8rem 1rem;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.ride-search:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.crowd-filter {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    background: #f5f5f5;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #eee;
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.wait-times-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.land-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.land-section h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.rides-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.ride-card {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.ride-card:hover {
+    transform: translateY(-2px);
+}
+
+.ride-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.ride-header h4 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.wait-time {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.ride-status {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    background: #e9ecef;
+}
+
+.status-badge.operating {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.status-badge.closed {
+    background: #FFEBEE;
+    color: #D32F2F;
+}
+
+.crowd-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: white;
+}
+
+.last-updated {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.5rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .wait-times-container {
+        padding: 1rem;
+    }
+    
+    .wait-times-controls {
+        flex-direction: column;
+    }
+    
+    .ride-search {
+        width: 100%;
+    }
+    
+    .crowd-filter {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .rides-grid {
+        grid-template-columns: 1fr;
+    }
+}
