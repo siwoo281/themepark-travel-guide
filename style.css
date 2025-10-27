@@ -169,6 +169,12 @@ body {
     padding: 0 20px;
 }
 
+/* Explicit grid placement so '여행 상품' sits under '월드 투어' on the left,
+   and the planner stays as the right sidebar */
+#tour-routes { grid-column: 1; }
+#packages { grid-column: 1; }
+.planner-section { grid-column: 2; grid-row: 1 / span 10; align-self: start; }
+
 /* ===== 여행 상품 섹션 ===== */
 .packages-section {
     background: white;
@@ -376,17 +382,54 @@ body {
 }
 
 .tour-filters .filter-group.countries {
-    grid-column: span 2;
+    /* Make the countries block start at the left edge and span full width under the first row */
+    grid-column: 1 / -1;
 }
 
 .tour-filters .countries-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 8px 12px;
+    /* Chip-style container: compact, wraps nicely */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     background: #fafafa;
     border: 1px solid #eee;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 12px;
+}
+
+/* Country checkbox as pills */
+.tour-filters .countries-grid label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9999px;
+    background: #f8fafc;
+    color: #374151;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.08s ease;
+    user-select: none;
+}
+
+.tour-filters .countries-grid label:hover {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+}
+
+/* Highlight the pill when checked (modern browsers) */
+.tour-filters .countries-grid label:has(input:checked) {
+    background: #eef2ff;
+    border-color: #6366f1;
+    color: #3730a3;
+}
+
+.tour-filters .countries-grid input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
 }
 
 .filter-actions {
@@ -818,6 +861,9 @@ body {
         max-height: none;
     }
 
+    /* Reset grid placement on narrow screens */
+    #tour-routes, #packages, .planner-section { grid-column: 1; grid-row: auto; }
+
     .packages-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
@@ -850,6 +896,10 @@ body {
     .logo h1 {
         font-size: 1.2rem;
     }
+
+    /* Make country chips tighter on small screens */
+    .tour-filters .countries-grid { gap: 6px; padding: 8px; }
+    .tour-filters .countries-grid label { padding: 6px 10px; font-size: 0.95rem; }
 }
 
 /* ===== 스크롤바 스타일링 ===== */
