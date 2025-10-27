@@ -65,6 +65,8 @@ function changeCurrency(currency) {
     
     // 모든 가격 다시 렌더링
     loadAndDisplayParks();
+    // 손익분기점 결과가 있으면 표시 통화만 갱신
+    try { refreshBreakevenResultFormatting(); } catch (_) {}
     
     showToast(`통화가 ${currency}로 변경되었습니다 💱`, 'success');
 }
@@ -113,8 +115,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 날짜 필드 초기화
         initializeDateFields();
         
-        console.log('✅ 초기화 완료!');
-        showToast('마법 같은 여행이 시작됩니다 ✨�', 'success');
+    console.log('✅ 초기화 완료!');
+    showToast('마법 같은 여행이 시작됩니다 ✨', 'success');
     } catch (error) {
         console.error('❌ 초기화 실패:', error);
         logError(error, { context: 'app_initialization' });
@@ -313,6 +315,11 @@ function setupBreakevenCalculator() {
             const revenueDisplay = formatPrice(totalRevenueKRW);
             const totalCostDisplay = formatPrice(totalCostKRW);
 
+            // 결과 렌더링 + 원화 기준 데이터 보존(통화 전환 시 재포맷 목적)
+            resultEl.dataset.fixedKrw = String(fixedCost);
+            resultEl.dataset.priceKrw = String(pricePerPerson);
+            resultEl.dataset.variableKrw = String(variableCost);
+            resultEl.dataset.minPeople = String(minPeople);
             resultEl.style.display = 'block';
             resultEl.innerHTML = `
                 <div class="summary">
@@ -343,6 +350,43 @@ function currencyInputToKRW(val) {
     if (!rate || rate <= 0) return n;
     // convert from displayed currency to KRW
     return Math.round(n / rate);
+}
+
+// 통화 변경 시 손익분기점 결과 표시만 재포맷
+function refreshBreakevenResultFormatting() {
+    const resultEl = document.getElementById('breakevenResult');
+    if (!resultEl || resultEl.style.display === 'none') return;
+
+    const fixed = Number(resultEl.dataset.fixedKrw);
+    const price = Number(resultEl.dataset.priceKrw);
+    const variable = Number(resultEl.dataset.variableKrw);
+    const minPeople = Number(resultEl.dataset.minPeople);
+    if (![fixed, price, variable, minPeople].every(v => isFinite(v) && v >= 0)) return;
+
+    const perHeadMarginKRW = price - variable;
+    const perHeadMarginDisplay = formatPrice(perHeadMarginKRW);
+    const fixedCostDisplay = formatPrice(fixed);
+    const priceDisplay = formatPrice(price);
+    const variableDisplay = formatPrice(variable);
+    const totalRevenueKRW = price * minPeople;
+    const totalVariableKRW = variable * minPeople;
+    const totalCostKRW = fixed + totalVariableKRW;
+    const revenueDisplay = formatPrice(totalRevenueKRW);
+    const totalCostDisplay = formatPrice(totalCostKRW);
+
+    resultEl.innerHTML = `
+        <div class="summary">
+            <div class="badge"><i class="fas fa-users"></i> 최소 모객 인원: <strong style="margin-left:6px;">${minPeople}명</strong></div>
+            <div class="badge"><i class="fas fa-won-sign"></i> 1인 마진: <strong style="margin-left:6px;">${perHeadMarginDisplay}</strong></div>
+        </div>
+        <ul style="margin-top:10px; color:#374151; line-height:1.7;">
+            <li>고정비: <strong>${fixedCostDisplay}</strong></li>
+            <li>1인 판매가: <strong>${priceDisplay}</strong></li>
+            <li>1인 변동비: <strong>${variableDisplay}</strong></li>
+            <li style="margin-top:6px;">손익분기점 시 총매출: <strong>${revenueDisplay}</strong></li>
+            <li>손익분기점 시 총비용(고정비+변동비): <strong>${totalCostDisplay}</strong></li>
+        </ul>
+    `;
 }
 
 async function getUnsplashCandidate() {
