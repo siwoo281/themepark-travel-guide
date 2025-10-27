@@ -23,7 +23,7 @@ const CONFIG = {
         // 우선순위 1: URL 쿼리 파라미터 ?hero=... (allowQueryOverride=true일 때)
         // 우선순위 2: 아래 preferredUrl 값
         // 우선순위 3: 외부 API(위키/스톡) 자동 탐색 → Base64 폴백
-        preferredUrl: (window.ENV?.HERO_IMAGE_URL || ''),
+        preferredUrl: (window.ENV?.HERO_IMAGE_URL || 'https://i.ibb.co/bM4byP5c/younho-choo-f6-Im-Wl-Mhn18-unsplash.jpg'),
         allowQueryOverride: true
     },
     
