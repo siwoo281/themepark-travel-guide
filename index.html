@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테마파크 여행 프로그램 - 전세계 테마파크 여행의 모든 것</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-ticket-alt"></i>
+                <h1>테마파크 여행 프로그램</h1>
+            </div>
+            <nav class="nav">
+                <a href="#packages">여행 상품</a>
+                <a href="#planner">일정 짜기</a>
+                <a href="#guide">여행 가이드</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>🎢 세계 최고의 테마파크로 떠나는 특별한 여행</h2>
+            <p>에버랜드부터 디즈니랜드까지, 꿈같은 테마파크 여행을 지금 예약하세요!</p>
+            <a href="#packages" class="cta-button">여행 상품 보기 <i class="fas fa-arrow-down"></i></a>
+        </div>
+    </section>
+
+    <div class="main-container">
+        <!-- 여행 상품 리스트 (메인) -->
+        <section id="packages" class="packages-section">
+            <div class="section-header">
+                <h2><i class="fas fa-gifts"></i> 인기 테마파크 여행 상품</h2>
+                <p>전 세계 테마파크 여행 상품을 한눈에</p>
+            </div>
+
+            <div class="packages-grid" id="packagesGrid">
+                <!-- 동적으로 생성됨 -->
+            </div>
+
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i> 상품을 불러오는 중...
+            </div>
+        </section>
+
+        <!-- 사용자 일정 짜기 (사이드바) -->
+        <aside id="planner" class="planner-section">
+            <div class="planner-header">
+                <h3><i class="fas fa-calendar-alt"></i> 나만의 여행 일정 만들기</h3>
+                <p>예산과 일정에 맞는 완벽한 여행 계획</p>
+            </div>
+
+            <form class="planner-form" id="plannerForm">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> 출발지</label>
+                    <input type="text" id="departure" placeholder="예: 서울" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marked-alt"></i> 테마파크 선택</label>
+                    <select id="destination" required>
+                        <option value="">선택하세요</option>
+                        <option value="everland">에버랜드 (한국)</option>
+                        <option value="disneyland-tokyo">도쿄 디즈니랜드 (일본)</option>
+                        <option value="universal-osaka">유니버설 스튜디오 오사카 (일본)</option>
+                        <option value="disneyland-california">디즈니랜드 캘리포니아 (미국)</option>
+                        <option value="universal-orlando">유니버설 올랜도 (미국)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> 출발일</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-check"></i> 도착일</label>
+                        <input type="date" id="endDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-plane"></i> 교통수단</label>
+                    <select id="transport" required>
+                        <option value="flight">항공편</option>
+                        <option value="train">기차</option>
+                        <option value="bus">버스</option>
+                        <option value="car">자가용</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-hotel"></i> 숙박 유형</label>
+                    <select id="accommodation" required>
+                        <option value="5star">5성급 호텔</option>
+                        <option value="4star">4성급 호텔</option>
+                        <option value="3star">3성급 호텔</option>
+                        <option value="resort">리조트</option>
+                        <option value="airbnb">에어비앤비</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-users"></i> 인원</label>
+                    <input type="number" id="people" min="1" value="2" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-utensils"></i> 1인당 식비 예산</label>
+                    <input type="number" id="mealBudget" placeholder="50000" required>
+                    <small>원/일</small>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="includeVisa">
+                        <span>비자 필요</span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="includeInsurance">
+                        <span>여행자 보험 포함</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-calculator"></i> 예상 비용 계산하기
+                </button>
+            </form>
+
+            <div class="estimate-result" id="estimateResult" style="display: none;">
+                <h4><i class="fas fa-receipt"></i> 예상 비용</h4>
+                <div class="cost-breakdown" id="costBreakdown"></div>
+                <div class="total-cost" id="totalCost"></div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 상품 상세 모달 -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 테마파크 여행 프로그램. All rights reserved.</p>
+            <p>
+                <i class="fas fa-envelope"></i> info@themeparktravel.com |
+                <i class="fas fa-phone"></i> 1588-0000
+            </p>
+        </div>
+    </footer>
+
+    <!-- 스크립트 -->
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
