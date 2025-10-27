@@ -24,18 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci || npm install
-
-      - name: Lint JavaScript
-        run: npm run lint || echo "Linting skipped"
-        continue-on-error: true
+      # 정적 사이트이므로 빌드/의존성 설치 불필요. Pages 아티팩트만 업로드합니다.
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
