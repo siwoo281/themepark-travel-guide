@@ -152,8 +152,8 @@ html {
 
 /* ===== 히어로 섹션 ===== */
 .hero {
-    /* 풀스크린 히어로: 아름다운 그라디언트 배경 */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    /* 풀스크린 히어로: 디즈니 성 이미지 */
+    background-image: url('images/disney-castle-hero.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
