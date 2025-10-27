@@ -106,6 +106,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 폼 이벤트 리스너 설정
         setupPlannerForm();
+
+    // 손익분기점 계산기 설정
+    setupBreakevenCalculator();
         
         // 날짜 필드 초기화
         initializeDateFields();
@@ -188,6 +191,10 @@ function tryApplyUserHeroImageOrFallback() {
         heroImg.crossOrigin = 'anonymous';
         heroImg.decoding = 'async';
         heroImg.loading = 'eager';
+        heroImg.fetchPriority = 'high';
+        // 레이아웃 시그널로 CLS 감소 (hero는 풀스크린)
+        heroImg.width = 1600;
+        heroImg.height = 900;
         heroImg.onerror = () => {
             console.warn('⚠️ 사용자 지정 이미지 로드 실패. 자동 탐색으로 폴백합니다:', userUrl);
             // 자동 체인으로 폴백
@@ -204,6 +211,8 @@ function tryApplyUserHeroImageOrFallback() {
             } catch (_) { /* noop */ }
             console.log('✅ 사용자 지정 히어로 이미지 적용 성공');
         };
+        // 반응형 소스 세팅 (가능한 경우)
+        try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) {}
         heroImg.src = userUrl;
         return;
     }
@@ -215,11 +224,15 @@ function tryApplyUserHeroImageOrFallback() {
 // 공통: 순차 후보 URL을 시도하며 실패 시 다음 후보로 넘어가기
 function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {
     if (!imgEl) return;
+    const heroSection = document.querySelector('.hero');
     let idx = 0;
     imgEl.referrerPolicy = 'no-referrer';
     imgEl.crossOrigin = 'anonymous';
     imgEl.decoding = 'async';
     imgEl.loading = 'eager';
+    imgEl.fetchPriority = 'high';
+    imgEl.width = 1600;
+    imgEl.height = 900;
 
     const tryNext = () => {
         const next = candidates[idx++];
@@ -233,10 +246,103 @@ function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {
             console.warn('⚠️ 이미지 로드 실패:', next);
             tryNext();
         };
+        imgEl.onload = () => {
+            try {
+                if (heroSection) {
+                    heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${next}')`;
+                    heroSection.style.backgroundSize = 'cover';
+                    heroSection.style.backgroundPosition = 'center';
+                }
+            } catch (_) { /* noop */ }
+        };
+        try { setHeroImageResponsiveSources(imgEl, next); } catch (_) {}
         imgEl.src = next;
     };
 
     tryNext();
+}
+
+// ===== 손익분기점 계산기 =====
+function setupBreakevenCalculator() {
+    const form = document.getElementById('breakevenForm');
+    const resultEl = document.getElementById('breakevenResult');
+    if (!form || !resultEl) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        try {
+            const fixedCostInput = document.getElementById('fixedCost');
+            const pricePerPersonInput = document.getElementById('pricePerPerson');
+            const variableCostInput = document.getElementById('variableCost');
+
+            const fixedCost = currencyInputToKRW(fixedCostInput.value);
+            const pricePerPerson = currencyInputToKRW(pricePerPersonInput.value);
+            const variableCost = currencyInputToKRW(variableCostInput.value);
+
+            if ([fixedCost, pricePerPerson, variableCost].some(v => !isFinite(v) || v < 0)) {
+                showToast('모든 값을 0 이상 숫자로 입력해주세요.', 'warning');
+                return;
+            }
+
+            const perHeadMarginKRW = pricePerPerson - variableCost;
+            if (perHeadMarginKRW <= 0) {
+                resultEl.style.display = 'block';
+                resultEl.innerHTML = `
+                    <div class="summary">
+                        <div class="badge"><i class="fas fa-exclamation-triangle"></i> 손익분기점 불가</div>
+                    </div>
+                    <p style="margin-top:8px;color:#6b7280;">
+                        1인 판매가가 1인 변동비보다 작거나 같아 손익분기점이 존재하지 않습니다. <br>
+                        판매가를 올리거나 변동비를 낮춰주세요.
+                    </p>`;
+                return;
+            }
+
+            const minPeople = Math.ceil(fixedCost / perHeadMarginKRW);
+            // 표시값은 현재 통화로 변환하여 보여주기
+            const perHeadMarginDisplay = formatPrice(perHeadMarginKRW);
+            const fixedCostDisplay = formatPrice(fixedCost);
+            const priceDisplay = formatPrice(pricePerPerson);
+            const variableDisplay = formatPrice(variableCost);
+
+            // 손익분기점 시점 총매출/총비용(표시용)
+            const totalRevenueKRW = pricePerPerson * minPeople;
+            const totalVariableKRW = variableCost * minPeople;
+            const totalCostKRW = fixedCost + totalVariableKRW;
+
+            const revenueDisplay = formatPrice(totalRevenueKRW);
+            const totalCostDisplay = formatPrice(totalCostKRW);
+
+            resultEl.style.display = 'block';
+            resultEl.innerHTML = `
+                <div class="summary">
+                    <div class="badge"><i class="fas fa-users"></i> 최소 모객 인원: <strong style="margin-left:6px;">${minPeople}명</strong></div>
+                    <div class="badge"><i class="fas fa-won-sign"></i> 1인 마진: <strong style="margin-left:6px;">${perHeadMarginDisplay}</strong></div>
+                </div>
+                <ul style="margin-top:10px; color:#374151; line-height:1.7;">
+                    <li>고정비: <strong>${fixedCostDisplay}</strong></li>
+                    <li>1인 판매가: <strong>${priceDisplay}</strong></li>
+                    <li>1인 변동비: <strong>${variableDisplay}</strong></li>
+                    <li style="margin-top:6px;">손익분기점 시 총매출: <strong>${revenueDisplay}</strong></li>
+                    <li>손익분기점 시 총비용(고정비+변동비): <strong>${totalCostDisplay}</strong></li>
+                </ul>
+            `;
+        } catch (err) {
+            console.error(err);
+            showToast('계산 중 오류가 발생했습니다.', 'error');
+        }
+    });
+}
+
+// 현재 선택된 통화 기준 입력값을 KRW로 환산
+function currencyInputToKRW(val) {
+    const n = Number(String(val).replace(/[,\s]/g, ''));
+    if (!isFinite(n)) return NaN;
+    if (CURRENT_CURRENCY === 'KRW' || !EXCHANGE_RATES) return n;
+    const rate = EXCHANGE_RATES[CURRENT_CURRENCY];
+    if (!rate || rate <= 0) return n;
+    // convert from displayed currency to KRW
+    return Math.round(n / rate);
 }
 
 async function getUnsplashCandidate() {
@@ -338,6 +444,44 @@ async function setHeroImageFromWikipedia() {
     } catch (err) {
         console.warn('⚠️ 외부 이미지 적용 중 오류. Base64 유지:', err);
     }
+}
+
+// 히어로 이미지 반응형 소스 설정
+// - Unsplash Source(https://source.unsplash.com/{WxH}/?query) 패턴을 인식해 다양한 해상도 srcset을 구성
+// - images.unsplash.com 또는 파라미터 w= 를 지원하는 경우 품질/폭 파라미터를 부여
+function setHeroImageResponsiveSources(img, url) {
+    // 기본 sizes: 뷰포트 전폭 사용
+    img.sizes = '100vw';
+
+    // source.unsplash.com 패턴 처리 (정적 크기 교체)
+    const suMatch = url.match(/^https?:\/\/source\.unsplash\.com\/(\d+)x(\d+)\/(.*)$/i);
+    if (suMatch) {
+        const [, , , tail] = suMatch;
+        const widths = [800, 1200, 1600, 2000, 2400];
+        const aspect = 9 / 16; // 대략 16:9
+        const srcset = widths
+            .map(w => `${url.replace(/\/source\.unsplash\.com\/(\d+)x(\d+)\//i, `/source.unsplash.com/${w}x${Math.round(w*aspect)}/`)} ${w}w`)
+            .join(', ');
+        img.srcset = srcset;
+        return;
+    }
+
+    // images.unsplash.com 또는 기타 쿼리 파라미터 지원: w, q, fit, auto=format
+    if (/images\.unsplash\.com/i.test(url)) {
+        const widths = [800, 1200, 1600, 2000, 2400];
+        const mk = (w) => {
+            const u = new URL(url);
+            u.searchParams.set('w', String(w));
+            u.searchParams.set('q', '75');
+            u.searchParams.set('fit', 'crop');
+            u.searchParams.set('auto', 'format');
+            return `${u.toString()} ${w}w`;
+        };
+        img.srcset = widths.map(mk).join(', ');
+        return;
+    }
+
+    // 기타 URL은 srcset 미설정 (원본만 사용)
 }
 
 // 접근성: ESC 키로 모달 닫기

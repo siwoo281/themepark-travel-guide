@@ -554,6 +554,73 @@ html {
     text-align: center;
     padding: 3rem;
     color: #666;
+/* ===== 손익분기점 계산기 ===== */
+.breakeven-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.breakeven-form .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.breakeven-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.breakeven-form .form-group label {
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.breakeven-form input[type="number"] {
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.breakeven-form .help {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.breakeven-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.breakeven-result {
+    margin-top: 1rem;
+    background: #f8f9fb;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.breakeven-result .summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+}
+
+.breakeven-result .badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 800;
+}
+
     font-size: 1.1rem;
 }
 
