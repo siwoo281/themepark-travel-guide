@@ -142,6 +142,18 @@ function tryApplyUserHeroImageOrFallback() {
     const userUrl = (allowQP && qp) ? qp : (cfg || '');
 
     if (userUrl) {
+        // 이미지 URL 형태인지 간단히 검사 (확장자 또는 data:image)
+        const isImageUrl = /^data:image\/(png|jpe?g|webp|gif|avif);base64,/i.test(userUrl)
+            || /\.(png|jpe?g|webp|gif|avif)(\?|#|$)/i.test(userUrl);
+        if (!isImageUrl) {
+            console.warn('⚠️ 이미지가 아닌 페이지 링크로 보입니다. 이미지 직접 주소를 사용하세요:', userUrl);
+            if (typeof showToast === 'function') {
+                showToast('이미지 페이지 링크가 아닌, 이미지 파일의 직접 URL을 넣어주세요.', 'warning');
+            }
+            // 자동 탐색으로 폴백
+            setHeroImageFromWikipedia();
+            return;
+        }
         console.log('🖼️ 사용자 지정 히어로 이미지 적용 시도:', userUrl);
         heroImg.referrerPolicy = 'no-referrer';
         heroImg.crossOrigin = 'anonymous';
