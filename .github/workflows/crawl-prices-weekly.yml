@@ -1,0 +1,49 @@
+name: Crawl Ticket Prices (Weekly Full)
+
+on:
+  schedule:
+    # Weekly at 16:30 UTC (01:30 KST next day)
+    - cron: '30 16 * * 0'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl-prices-weekly
+  cancel-in-progress: false
+
+jobs:
+  crawl-weekly-official:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Google Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'stable'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run crawler (full, Selenium-enabled)
+        run: |
+          python scripts/crawl-prices.py
+
+      - name: Commit and push updated prices (include detailed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(data): weekly full crawl update (prices + detailed)'
+          file_pattern: |
+            prices-data.json
+            prices-data-detailed.json

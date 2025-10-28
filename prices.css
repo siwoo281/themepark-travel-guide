@@ -59,6 +59,19 @@
     color: #555;
 }
 
+.price-card .price .from-badge {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #3852d6;
+    background: #eef2ff;
+    border: 1px solid #d7ddff;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 8px;
+}
+
 .price-card .updated-time {
     font-size: 0.9rem;
     color: #888;

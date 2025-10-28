@@ -363,7 +363,7 @@ def crawl_price_from_ticket_sites(keyword, driver):
     print(f"{keyword} - 티켓 사이트 크롤링 비활성화됨 (위메프/인터파크티켓/네이버예약 제외)")
     return [], []
 
-def crawl_package_prices(fast: bool = False):
+def crawl_package_prices(fast: bool = False, official_only: bool = False):
     """각 파크의 가격 정보 수집"""
     parks = {
         '에버랜드': 62000,
@@ -398,6 +398,15 @@ def crawl_package_prices(fast: bool = False):
                 # 0. 공식 사이트에서 가격 수집(가능한 경우)
                 official_prices, official_raw = crawl_price_from_official(park_name, session=session, driver=(driver if (driver is not None and not fast) else None))
                 raw_details[park_name].extend(official_raw)
+
+                # official-only 모드에서는 공식가만 사용하고, 없으면 기본값 유지
+                if official_only:
+                    if official_prices:
+                        parks[park_name] = min(official_prices)
+                        print(f"{park_name} 최종 가격(공식 From): {parks[park_name]}원 [official-only]")
+                    else:
+                        print(f"{park_name} 공식가를 찾지 못했습니다(official-only). 기본값 유지: {parks[park_name]}원")
+                    continue
 
                 # 1. 검색 엔진에서 가격 수집
                 search_prices, search_raw = crawl_price_from_search(park_name, session=session, max_prices_per_source=10 if not fast else 6)
@@ -447,9 +456,10 @@ def crawl_package_prices(fast: bool = False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Crawl theme park ticket prices')
     parser.add_argument('--fast', action='store_true', help='빠른 모드: Selenium 건너뛰고 검색 기반만 실행')
+    parser.add_argument('--official-only', action='store_true', help='공식 사이트 가격만 사용 (검색/티켓 사이트 제외)')
     args = parser.parse_args()
 
-    prices, raw = crawl_package_prices(fast=args.fast)
+    prices, raw = crawl_package_prices(fast=args.fast, official_only=args.official_only)
     
     # 결과 저장
     now_iso = datetime.now().isoformat()

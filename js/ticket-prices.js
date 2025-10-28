@@ -78,14 +78,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 wrapper.setAttribute('aria-label', `${parkName} 공식 사이트로 이동`);
                 wrapper.classList.add('is-link');
             }
+            // 카드 전체 툴팁: From(최저가) 기준 및 업데이트 시간 안내
+            const updatedText = new Date(updated_at).toLocaleString('ko-KR');
+            wrapper.title = `표시 가격은 'From(최저가)' 기준입니다.\n업데이트: ${updatedText}`;
 
             wrapper.innerHTML = `
                 <h3>${parkName}</h3>
                 <div class="price">
-                    ${new Intl.NumberFormat('ko-KR').format(price)}<small>원~</small>
+                    <span class="from-badge">From</span>
+                    ${new Intl.NumberFormat('ko-KR').format(price)}<small>원</small>
                 </div>
                 <p class="updated-time">
-                    <i class="fas fa-sync-alt"></i> 업데이트: ${new Date(updated_at).toLocaleString('ko-KR')}
+                    <i class="fas fa-sync-alt"></i> 업데이트: ${updatedText}
                 </p>
             `;
             pricesGrid.appendChild(wrapper);
