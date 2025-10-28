@@ -1,0 +1,41 @@
+name: Crawl Ticket Prices
+
+on:
+  schedule:
+    # 16:00 UTC == 01:00 KST (UTC+9)
+    - cron: '0 16 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl-prices
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run crawler (fast mode)
+        run: |
+          python scripts/crawl-prices.py --fast
+
+      - name: Commit and push updated prices
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(data): update prices-data.json via scheduled crawl'
+          file_pattern: prices-data.json

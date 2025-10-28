@@ -30,6 +30,7 @@
     <!-- Preload 1st-priority hero image to improve LCP -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50">
     <link rel="stylesheet" href="style.css?v=20251028-2">
+    <link rel="stylesheet" href="prices.css?v=20251028-2">
 </head>
 <body>
     <!-- 헤더 -->
@@ -376,6 +377,23 @@
             <div class="divider-line"></div>
         </div>
 
+        <!-- 실시간 티켓 가격 섹션 -->
+        <section id="ticket-prices" class="ticket-prices-section">
+            <div class="section-header">
+                <h2><i class="fas fa-tags"></i> 실시간 테마파크 티켓 가격</h2>
+                <p>주요 테마파크의 최신 가격 정보를 확인하세요</p>
+            </div>
+            <div class="prices-grid" id="pricesGrid">
+                <!-- 동적으로 가격 정보가 채워질 영역 -->
+            </div>
+            <div class="loading" id="pricesLoading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> 가격 정보를 불러오는 중...
+            </div>
+            <p class="price-info-notice">
+                <i class="fas fa-info-circle"></i> 최종 가격은 검색 시점 및 판매처에 따라 변동될 수 있습니다.
+            </p>
+        </section>
+
         <!-- 손익분기점 계산기 -->
         <section id="breakeven" class="breakeven-section packages-section">
             <div class="section-header">
@@ -596,6 +614,7 @@
     <script src="scripts/calculator.js"></script>
     <script src="scripts/planner.js"></script>
     <script src="scripts/nav.js"></script>
+    <script src="js/ticket-prices.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

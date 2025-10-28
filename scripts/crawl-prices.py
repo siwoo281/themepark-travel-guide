@@ -12,6 +12,24 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import re
+import random
+import argparse
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+# 대략적 환율(간단 적용용) — 정확 환율 연동 전까지 임시 사용
+RATES_APPROX = {
+    'KRW': 1.0,
+    'JPY': 10.0,    # 1 JPY ≈ 10 KRW (대략치)
+    'USD': 1350.0,  # 1 USD ≈ 1350 KRW (예시)
+    'EUR': 1450.0,  # 1 EUR ≈ 1450 KRW (예시)
+    'HKD': 175.0,   # 1 HKD ≈ 175 KRW (예시)
+    'SGD': 1000.0,  # 1 SGD ≈ 1000 KRW (예시)
+    'CNY': 190.0    # 1 CNY(위안) ≈ 190 KRW (예시)
+}
+
+PRICE_MIN_KRW = 10000
+PRICE_MAX_KRW = 1000000
 
 # SSL 경고 무시
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -82,6 +100,12 @@ def setup_driver():
     
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
+    # 타임아웃 설정
+    try:
+        driver.set_page_load_timeout(10)
+        driver.set_script_timeout(10)
+    except Exception:
+        pass
     
     # 자동화 감지 우회
     driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
@@ -94,7 +118,94 @@ def setup_driver():
     
     return driver
 
-def crawl_price_from_search(keyword):
+def _jitter(min_s=0.6, max_s=1.2):
+    try:
+        time.sleep(random.uniform(min_s, max_s))
+    except Exception:
+        time.sleep(min_s)
+
+def get_requests_session():
+    """Retry 설정이 포함된 requests 세션"""
+    session = requests.Session()
+    retries = Retry(
+        total=2,
+        backoff_factor=0.5,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET", "HEAD"],
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retries, pool_connections=10, pool_maxsize=10)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
+def convert_to_krw(amount: int, currency: str) -> int | None:
+    try:
+        rate = RATES_APPROX.get(currency)
+        if rate is None:
+            return None
+        krw = int(round(amount * rate))
+        if PRICE_MIN_KRW <= krw <= PRICE_MAX_KRW:
+            return krw
+        return None
+    except Exception:
+        return None
+
+def parse_price_token(token: str) -> tuple[int | None, int | None, str | None]:
+    """개별 가격 토큰에서 (KRW 변환가, 원문 금액, 통화) 반환"""
+    try:
+        t = token.strip()
+        currency = None
+        if ('원' in t) or ('₩' in t) or ('￦' in t):
+            currency = 'KRW'
+        elif ('HK$' in t) or ('HKD' in t):
+            currency = 'HKD'
+        elif ('SG$' in t) or ('S$' in t) or ('SGD' in t):
+            currency = 'SGD'
+        elif ('US$' in t) or ('USD' in t):
+            currency = 'USD'
+        elif ('€' in t) or ('EUR' in t):
+            currency = 'EUR'
+        elif ('¥' in t) or ('￥' in t) or ('円' in t) or ('엔' in t):
+            currency = 'JPY'
+        elif ('CNY' in t) or ('RMB' in t) or ('元' in t) or ('위안' in t):
+            currency = 'CNY'
+        elif '$' in t:
+            currency = 'USD'  # 모호한 $는 USD로 가정
+
+        m = re.search(r'[\d,]+', t)
+        if not m:
+            return (None, None, None)
+        amount = int(m.group(0).replace(',', ''))
+
+        if currency is None:
+            return (None, amount, None)
+
+        if currency == 'KRW':
+            krw = amount if PRICE_MIN_KRW <= amount <= PRICE_MAX_KRW else None
+            return (krw, amount, currency)
+        else:
+            krw = convert_to_krw(amount, currency)
+            return (krw, amount, currency)
+    except Exception:
+        return (None, None, None)
+
+def extract_prices_from_text(text: str, max_items: int = 20):
+    """HTML/텍스트에서 다양한 통화 표기를 추출해 KRW로 변환한 샘플 목록을 반환"""
+    results = []
+    seen = set()
+    pattern = re.compile(r'(?:HK\$|US\$|SG\$|S\$|USD|HKD|SGD|EUR|CNY|RMB|\$|€|¥|￥)?\s*[\d,]+\s*(?:원|₩|￦|円|엔|元|위안|USD|HKD|SGD|EUR|CNY)?')
+    for m in pattern.finditer(text):
+        token = m.group(0)
+        krw, raw_amount, cur = parse_price_token(token)
+        if krw and (krw not in seen):
+            seen.add(krw)
+            results.append({'krw': krw, 'amount': raw_amount, 'currency': cur, 'token': token.strip()})
+            if len(results) >= max_items:
+                break
+    return results
+
+def crawl_price_from_search(keyword, session=None, max_prices_per_source=10):
     """검색 엔진에서 가격 정보 크롤링"""
     try:
         encoded_keyword = requests.utils.quote(f"{keyword} 입장권 가격")
@@ -102,40 +213,43 @@ def crawl_price_from_search(keyword):
             f"https://search.naver.com/search.naver?query={encoded_keyword}",
             f"https://search.daum.net/search?q={encoded_keyword}",
         ]
-        
+
         prices = []
+        raw_entries = []
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/119.0.0.0',
             'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
         }
-        
-        session = requests.Session()
+        if session is None:
+            session = get_requests_session()
         for url in search_urls:
             try:
-                response = session.get(url, headers=headers, timeout=10)
+                response = session.get(url, headers=headers, timeout=8)
                 response.raise_for_status()
-                
-                soup = BeautifulSoup(response.text, 'lxml')
-                
-                # 모든 텍스트 노드에서 가격 패턴 찾기
-                for text in soup.stripped_strings:
-                    if '원' in text or '₩' in text or '￦' in text:
-                        price = normalize_price(text)
-                        if price:
-                            prices.append(price)
-                            print(f"{keyword} 검색 가격 발견: {price}원")
-                
+                # 다중 통화 가격 토큰 추출
+                samples = extract_prices_from_text(response.text, max_items=max_prices_per_source)
+                for s in samples:
+                    prices.append(s['krw'])
+                    raw_entries.append({
+                        'amount': s['amount'],
+                        'currency': s['currency'],
+                        'krw': s['krw'],
+                        'source': url,
+                        'token': s['token'],
+                        'method': 'search'
+                    })
+                    print(f"{keyword} 검색 가격 발견: {s['krw']}원 ({s['currency']} {s['amount']})")
+
             except Exception as e:
                 print(f"{keyword} - {url} 검색 실패: {str(e)}")
                 continue
-                
-            time.sleep(2)
-        
-        return prices
-        
+            _jitter()
+
+        return prices, raw_entries
+
     except Exception as e:
         print(f"{keyword} 검색 크롤링 실패: {str(e)}")
-        return []
+        return [], []
 
 def crawl_price_from_ticket_sites(keyword, driver):
     """티켓 사이트들에서 가격 정보 크롤링"""
@@ -158,32 +272,42 @@ def crawl_price_from_ticket_sites(keyword, driver):
     ]
     
     prices = []
+    raw_entries = []
     for site in sites:
         try:
             print(f"{keyword} - {site['name']} 크롤링 시도...")
             driver.get(site['url'])
-            time.sleep(3)
+            _jitter(0.8, 1.5)
             
             # 페이지 로딩 완료 대기
-            WebDriverWait(driver, 10).until(
+            WebDriverWait(driver, 6).until(
                 lambda d: d.execute_script("return document.readyState") == "complete"
             )
             
             # 스크롤 동적 처리
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight/2);")
-            time.sleep(2)
+            _jitter(0.6, 1.2)
             
             # 가격 추출
             for selector in site['selectors']:
                 try:
-                    elements = WebDriverWait(driver, 5).until(
+                    elements = WebDriverWait(driver, 4).until(
                         EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector))
                     )
                     
-                    for element in elements[:5]:  # 상위 5개만 확인
+                    for element in elements[:3]:  # 상위 3개만 확인 (속도 개선)
                         price = normalize_price(element.text)
                         if price:
                             prices.append(price)
+                            raw_entries.append({
+                                'amount': price,
+                                'currency': 'KRW',
+                                'krw': price,
+                                'source': site['url'],
+                                'token': element.text.strip()[:120],
+                                'method': 'ticket-site',
+                                'site': site['name']
+                            })
                             print(f"{keyword} - {site['name']} 가격 발견: {price}원")
                             
                 except Exception:
@@ -193,36 +317,65 @@ def crawl_price_from_ticket_sites(keyword, driver):
             print(f"{keyword} - {site['name']} 크롤링 실패: {str(e)}")
             continue
             
-        time.sleep(2)
+        _jitter(0.6, 1.0)
     
-    return prices
+    return prices, raw_entries
 
-def crawl_package_prices():
+def crawl_package_prices(fast: bool = False):
     """각 파크의 가격 정보 수집"""
     parks = {
-        '디즈니랜드': 380000,  # 기본값
-        '유니버설': 350000,   # 기본값
-        '에버랜드': 320000    # 기본값
+        '에버랜드': 62000,
+        '롯데월드': 62000,
+        '도쿄 디즈니랜드': 94000, # 9,400엔 기준
+        '유니버설 스튜디오 재팬': 86000, # 8,600엔 기준
+        '상하이 디즈니 리조트': 80000, # 475위안 기준
+        '홍콩 디즈니랜드': 110000, # HKD 기준 환산 대략
+        '디즈니랜드 파리': 130000, # EUR 기준 환산 대략
+        '디즈니랜드 캘리포니아': 140000, # 104달러 기준 (캘리포니아)
+        '유니버설 스튜디오 할리우드': 150000, # USD 기준 환산 대략
+        '유니버설 스튜디오 싱가포르': 90000, # SGD 기준 환산 대략
+        '유니버설 올랜도 리조트': 180000, # USD 기준 환산 대략
+        '올랜도 디즈니 월드': 170000 # Walt Disney World (USD 기준 환산 대략)
     }
     
     driver = None
+    session = get_requests_session()
+    raw_details = { name: [] for name in parks.keys() }
+    # 기준가 백업(범위 필터에 사용)
+    baseline = dict(parks)
     try:
-        driver = setup_driver()
+        # Selenium 드라이버 설정 (실패 시 검색엔진 기반 크롤링만 수행)
+        if not fast:
+            try:
+                driver = setup_driver()
+            except Exception as e:
+                print(f"⚠️ Selenium 드라이버 초기화 실패: {e}\n검색엔진 기반 크롤링만 진행합니다.")
         
         for park_name in parks.keys():
             try:
                 # 1. 검색 엔진에서 가격 수집
-                search_prices = crawl_price_from_search(park_name)
+                search_prices, search_raw = crawl_price_from_search(park_name, session=session, max_prices_per_source=10 if not fast else 6)
+                raw_details[park_name].extend(search_raw)
                 
-                # 2. 티켓 사이트에서 가격 수집
-                ticket_prices = crawl_price_from_ticket_sites(park_name, driver)
+                # 2. 티켓 사이트에서 가격 수집 (드라이버 사용 가능 시에만)
+                ticket_prices = []
+                if driver is not None and not fast:
+                    ticket_prices, ticket_raw = crawl_price_from_ticket_sites(park_name, driver)
+                    raw_details[park_name].extend(ticket_raw)
+                else:
+                    print(f"{park_name} - Selenium 미사용: 티켓 사이트 크롤링 건너뜀")
                 
                 # 모든 가격 합치기
                 all_prices = search_prices + ticket_prices
+                # 파크별 합리적 범위 필터 적용 (기본가의 40% ~ 300%)
+                base = baseline.get(park_name, 50000)
+                min_ok = max(PRICE_MIN_KRW, int(base * 0.4))
+                max_ok = min(PRICE_MAX_KRW, int(base * 3.0))
+                filtered = [p for p in all_prices if (min_ok <= p <= max_ok)]
                 
-                if all_prices:
+                if filtered:
                     # 중간값으로 최종 가격 결정
-                    median_price = get_median_price(all_prices)
+                    median_price = get_median_price(filtered)
                     parks[park_name] = median_price
                     print(f"{park_name} 최종 가격 업데이트: {median_price}원")
                 else:
@@ -236,18 +389,31 @@ def crawl_package_prices():
         if driver:
             driver.quit()
     
-    return parks
+    return parks, raw_details
 
 if __name__ == "__main__":
-    prices = crawl_package_prices()
+    parser = argparse.ArgumentParser(description='Crawl theme park ticket prices')
+    parser.add_argument('--fast', action='store_true', help='빠른 모드: Selenium 건너뛰고 검색 기반만 실행')
+    args = parser.parse_args()
+
+    prices, raw = crawl_package_prices(fast=args.fast)
     
     # 결과 저장
+    now_iso = datetime.now().isoformat()
     result = {
-        'updated_at': datetime.now().isoformat(),
+        'updated_at': now_iso,
         'prices': prices
     }
     
     with open('prices-data.json', 'w', encoding='utf8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    
+    # 원문 통화/금액을 포함한 상세 파일도 저장
+    detailed = {
+        'updated_at': now_iso,
+        'prices': prices,
+        'details': raw
+    }
+    with open('prices-data-detailed.json', 'w', encoding='utf8') as f:
+        json.dump(detailed, f, ensure_ascii=False, indent=2)
+
     print("✅ 가격 크롤링 완료")
