@@ -162,8 +162,10 @@ html {
     color: white;
     min-height: 100vh;
     padding: 0; /* 패딩 완전 제거 - 헤더 뒤까지 이미지 표시 */
-    margin-top: -70px; /* 헤더 높이만큼 위로 올려서 헤더 뒤로 이미지가 보이게 */
-    padding-top: 70px; /* 실제 컨텐츠는 헤더 아래에서 시작 */
+     /* 기본은 데스크톱에서 헤더 뒤로 자연스럽게 보이도록 처리
+         모바일에서는 별도 미디어쿼리에서 안전 여백으로 전환 */
+     margin-top: -70px; /* 데스크톱: 헤더 뒤로 당김 */
+     padding-top: 70px;  /* 데스크톱: 실제 컨텐츠는 헤더 아래에서 시작 */
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -2118,6 +2120,35 @@ html {
 }
 
 @media (max-width: 480px) {
+    /* 헤더 내부 요소가 겹치지 않도록 래핑 허용 */
+    .header .container {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    /* 내비게이션이 좁은 화면에서 줄바꿈/중앙정렬 되도록 */
+    .nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    /* 통화 선택기는 자동으로 다음 줄 우측 정렬되도록 */
+    .currency-selector {
+        margin-left: auto;
+    }
+
+    /* 모바일에서는 음수 마진을 제거하고 안전한 상단 여백 사용 */
+    .hero {
+        margin-top: 0;        /* 헤더 뒤로 당김 해제 */
+        padding-top: 96px;    /* 고정 헤더 높이 보정 (대략 96px) */
+    }
+
+    /* 장식 이모지로 인해 텍스트가 겹치지 않도록 모바일에서 비활성화 */
+    .hero .hero-content::before {
+        content: none;
+    }
     .itinerary-header h3 {
         font-size: 20px;
     }
@@ -2337,6 +2368,11 @@ html {
 
 .package-card::after {
     bottom: -15px;
+    /* 더 작은 화면에서 헤더 여백, 텍스트 크기 추가 조정 */
+    .header { padding: 0.75rem 0; }
+    .logo h1 { font-size: 1rem; }
+    .nav a { font-size: 0.85rem; }
+    .hero { padding-top: 88px; }
 }
 
 .tour-route-card {
