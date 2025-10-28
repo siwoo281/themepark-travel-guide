@@ -24,9 +24,9 @@ const CONFIG = {
         // 우선순위 1: URL 쿼리 파라미터 ?hero=... (allowQueryOverride=true일 때)
         // 우선순위 2: 아래 preferredUrl 값
         // 우선순위 3: 외부 API(위키/스톡) 자동 탐색 → Base64 폴백
-        preferredUrl: (window.ENV?.HERO_IMAGE_URL || 'https://images.unsplash.com/photo-1595274013294-6946aac9eb22?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470'),
-        // 초기 페인트용 저용량/블러 플레이스홀더 (잠깐 뜨는 이미지)
-        // 필요 시 원하는 이미지 URL로 교체 가능합니다.
+        // 요청에 따라 저용량(블러) 이미지를 메인으로 사용
+        preferredUrl: (window.ENV?.HERO_IMAGE_URL || 'https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50'),
+        // 초기 페인트용 플레이스홀더도 동일한 저용량 이미지로 통일
         placeholderUrl: 'https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50',
         allowQueryOverride: true
     },

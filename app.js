@@ -221,10 +221,26 @@ function tryApplyUserHeroImageOrFallback() {
 
     const userUrl = (allowQP && qp) ? qp : (cfg || '');
 
+    // 캐시 버스터: 캐시된 URL이 설정 선호 URL과 다르면 선호 URL을 우선 적용하고 캐시 갱신
+    try {
+        if (cached && userUrl && cached !== userUrl) {
+            console.log('🔁 히어로 캐시 갱신: cached != preferred → preferred 적용');
+            if (heroSection) {
+                heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${userUrl}')`;
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center';
+            }
+            try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) {}
+            heroImg.src = userUrl;
+            try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) {}
+        }
+    } catch (_) { /* noop */ }
+
     if (userUrl) {
         // 이미지 URL 형태인지 간단히 검사 (확장자 또는 data:image)
         const isImageUrl = /^data:image\/(png|jpe?g|webp|gif|avif);base64,/i.test(userUrl)
-            || /\.(png|jpe?g|webp|gif|avif)(\?|#|$)/i.test(userUrl);
+            || /\.(png|jpe?g|webp|gif|avif)(\?|#|$)/i.test(userUrl)
+            || /images\.unsplash\.com|source\.unsplash\.com|upload\.wikimedia\.org/i.test(userUrl);
         if (!isImageUrl) {
             console.warn('⚠️ 이미지가 아닌 페이지 링크로 보입니다. 이미지 직접 주소를 사용하세요:', userUrl);
             if (typeof showToast === 'function') {
