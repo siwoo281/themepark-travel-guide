@@ -139,6 +139,113 @@ def get_requests_session():
     session.mount('https://', adapter)
     return session
 
+# 공식 사이트 URL 및 기대 통화 매핑
+OFFICIAL_SITES: dict[str, dict] = {
+    # 국제 도메인 위주(정적 "From $X" 문구 존재) — 요청 기반만으로 처리 가능
+    '디즈니랜드 캘리포니아': {
+        'url': 'https://disneyland.disney.go.com/tickets/',
+        'currency': 'USD',
+    },
+    '올랜도 디즈니 월드': {
+        'url': 'https://disneyworld.disney.go.com/tickets/',
+        'currency': 'USD',
+    },
+    '유니버설 스튜디오 할리우드': {
+        'url': 'https://www.universalstudioshollywood.com/web/en/us/tickets-packages',
+        'currency': 'USD',
+    },
+    '유니버설 올랜도 리조트': {
+        'url': 'https://www.universalorlando.com/web/en/us/tickets-packages',
+        'currency': 'USD',
+    },
+    '유니버설 스튜디오 싱가포르': {
+        'url': 'https://www.rwsentosa.com/en/attractions/universal-studios-singapore/tickets',
+        'currency': 'SGD',
+    },
+    '디즈니랜드 파리': {
+        'url': 'https://www.disneylandparis.com/en-gb/tickets/',
+        'currency': 'EUR',
+    },
+    '홍콩 디즈니랜드': {
+        'url': 'https://www.hongkongdisneyland.com/tickets/',
+        'currency': 'HKD',
+    },
+    '상하이 디즈니 리조트': {
+        'url': 'https://www.shanghaidisneyresort.com/en/tickets/',
+        'currency': 'CNY',
+    },
+    '도쿄 디즈니랜드': {
+        'url': 'https://www.tokyodisneyresort.jp/en/tdl/ticket/',
+        'currency': 'JPY',
+    },
+    '유니버설 스튜디오 재팬': {
+        'url': 'https://www.usj.co.jp/web/en/us/ticket/',
+        'currency': 'JPY',
+    },
+    # 국내 파크는 동적 요소/회원가 등 변수가 많아 우선 제외(추후 보강)
+}
+
+def crawl_price_from_official(park_name: str, session=None, driver=None, max_tokens: int = 30):
+    """공식 사이트에서 최소(From) 가격을 탐색해 KRW로 변환, (가격 리스트, raw) 반환
+    - 의도: 검색/티켓 사이트 대비 공식가 우선 매칭
+    - 전략: 페이지 텍스트에서 통화 토큰 추출 후 기대 통화만 필터, 최소값 사용(From)
+    """
+    info = OFFICIAL_SITES.get(park_name)
+    if not info:
+        return [], []
+    url = info['url']
+    expected_currency = info['currency']
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/119.0.0.0',
+        'Accept-Language': 'en-US,en;q=0.8,ko-KR;q=0.7,ko;q=0.6'
+    }
+    if session is None:
+        session = get_requests_session()
+    prices = []
+    raw = []
+    try:
+        html_text = None
+        if driver is not None:
+            try:
+                driver.get(url)
+                _jitter(0.8, 1.4)
+                WebDriverWait(driver, 8).until(
+                    lambda d: d.execute_script("return document.readyState") == "complete"
+                )
+                html_text = driver.page_source
+            except Exception as e:
+                print(f"{park_name} 공식(Selenium) 접근 실패: {e}")
+        if html_text is None:
+            resp = session.get(url, headers=headers, timeout=12)
+            resp.raise_for_status()
+            html_text = resp.text
+
+        # BeautifulSoup로 텍스트 추출(스크립트/스타일 제거)
+        soup = BeautifulSoup(html_text, 'lxml')
+        for tag in soup(['script', 'style', 'noscript']):
+            tag.decompose()
+        text = soup.get_text(" ", strip=True)
+        # 통화 토큰 추출 후 기대 통화만 필터
+        samples = extract_prices_from_text(text, max_items=max_tokens)
+        filtered = [s for s in samples if (s['currency'] == expected_currency)]
+        # 일부 페이지는 $가 단독 표기 — USD로 처리했으므로 통화 매칭됨
+        # 최소값(From) 선호
+        for s in filtered:
+            prices.append(s['krw'])
+            raw.append({
+                'amount': s['amount'],
+                'currency': s['currency'],
+                'krw': s['krw'],
+                'source': url,
+                'token': s['token'],
+                'method': 'official'
+            })
+        if prices:
+            print(f"{park_name} 공식가 후보: {sorted(prices)[:3]} (KRW)")
+    except Exception as e:
+        print(f"{park_name} 공식 사이트 접근 실패: {e}")
+    return prices, raw
+
 def convert_to_krw(amount: int, currency: str) -> int | None:
     try:
         rate = RATES_APPROX.get(currency)
@@ -252,74 +359,9 @@ def crawl_price_from_search(keyword, session=None, max_prices_per_source=10):
         return [], []
 
 def crawl_price_from_ticket_sites(keyword, driver):
-    """티켓 사이트들에서 가격 정보 크롤링"""
-    sites = [
-        {
-            'name': '인터파크티켓',
-            'url': f'http://ticket.interpark.com/TPGoodsList.asp?Ca=Tik&SubCa=Tik_Tic&keyword={keyword}',
-            'selectors': ['.Price', '.price', '.sale_price']
-        },
-        {
-            'name': '네이버 예약',
-            'url': f'https://m.booking.naver.com/search?keywords={keyword}',
-            'selectors': ['.price', '.amount', '.sale_price']
-        },
-        {
-            'name': '위메프',
-            'url': f'https://search.wemakeprice.com/search?search_cate=top&keyword={keyword}%20티켓',
-            'selectors': ['.price_discount', '.num']
-        }
-    ]
-    
-    prices = []
-    raw_entries = []
-    for site in sites:
-        try:
-            print(f"{keyword} - {site['name']} 크롤링 시도...")
-            driver.get(site['url'])
-            _jitter(0.8, 1.5)
-            
-            # 페이지 로딩 완료 대기
-            WebDriverWait(driver, 6).until(
-                lambda d: d.execute_script("return document.readyState") == "complete"
-            )
-            
-            # 스크롤 동적 처리
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight/2);")
-            _jitter(0.6, 1.2)
-            
-            # 가격 추출
-            for selector in site['selectors']:
-                try:
-                    elements = WebDriverWait(driver, 4).until(
-                        EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector))
-                    )
-                    
-                    for element in elements[:3]:  # 상위 3개만 확인 (속도 개선)
-                        price = normalize_price(element.text)
-                        if price:
-                            prices.append(price)
-                            raw_entries.append({
-                                'amount': price,
-                                'currency': 'KRW',
-                                'krw': price,
-                                'source': site['url'],
-                                'token': element.text.strip()[:120],
-                                'method': 'ticket-site',
-                                'site': site['name']
-                            })
-                            print(f"{keyword} - {site['name']} 가격 발견: {price}원")
-                            
-                except Exception:
-                    continue
-                    
-        except Exception as e:
-            print(f"{keyword} - {site['name']} 크롤링 실패: {str(e)}")
-            continue
-            
-        _jitter(0.6, 1.0)
-    
-    return prices, raw_entries
+    """티켓 사이트 크롤링 비활성화: 위메프/인터파크티켓/네이버예약 제외"""
+    print(f"{keyword} - 티켓 사이트 크롤링 비활성화됨 (위메프/인터파크티켓/네이버예약 제외)")
+    return [], []
 
 def crawl_package_prices(fast: bool = False):
     """각 파크의 가격 정보 수집"""
@@ -350,9 +392,13 @@ def crawl_package_prices(fast: bool = False):
                 driver = setup_driver()
             except Exception as e:
                 print(f"⚠️ Selenium 드라이버 초기화 실패: {e}\n검색엔진 기반 크롤링만 진행합니다.")
-        
+
         for park_name in parks.keys():
             try:
+                # 0. 공식 사이트에서 가격 수집(가능한 경우)
+                official_prices, official_raw = crawl_price_from_official(park_name, session=session, driver=(driver if (driver is not None and not fast) else None))
+                raw_details[park_name].extend(official_raw)
+
                 # 1. 검색 엔진에서 가격 수집
                 search_prices, search_raw = crawl_price_from_search(park_name, session=session, max_prices_per_source=10 if not fast else 6)
                 raw_details[park_name].extend(search_raw)
@@ -366,7 +412,14 @@ def crawl_package_prices(fast: bool = False):
                     print(f"{park_name} - Selenium 미사용: 티켓 사이트 크롤링 건너뜀")
                 
                 # 모든 가격 합치기
-                all_prices = search_prices + ticket_prices
+                all_prices = []
+                # 공식가 우선: 공식가가 있으면 최소값(From)을 채택하여 최종값으로
+                if official_prices:
+                    official_min = min(official_prices)
+                    parks[park_name] = official_min
+                    print(f"{park_name} 최종 가격(공식 From): {official_min}원")
+                else:
+                    all_prices = search_prices + ticket_prices
                 # 파크별 합리적 범위 필터 적용 (기본가의 40% ~ 300%)
                 base = baseline.get(park_name, 50000)
                 min_ok = max(PRICE_MIN_KRW, int(base * 0.4))
