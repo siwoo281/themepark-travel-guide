@@ -196,13 +196,7 @@ html {
 }
 
 .hero .hero-content::after {
-    content: '🎪';
-    position: absolute;
-    bottom: -60px;
-    right: 15%;
-    font-size: 3rem;
-    animation: twinkle 4s ease-in-out infinite 1s;
-    opacity: 0.6;
+    content: none; /* 요청에 따라 천막(🎪) 이모지 제거 */
 }
 
 @keyframes twinkle {
