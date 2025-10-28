@@ -259,3 +259,9 @@ function initializeDateFields() {
         departureField.placeholder = '예: 서울';
     }
 }
+
+// 노출: 전역 바인딩
+window.setupPlannerForm = window.setupPlannerForm || setupPlannerForm;
+window.calculateEstimate = window.calculateEstimate || calculateEstimate;
+window.displayEstimate = window.displayEstimate || displayEstimate;
+window.initializeDateFields = window.initializeDateFields || initializeDateFields;

@@ -129,11 +129,11 @@ function createWorldMap() {
                     const size = Math.sqrt(country.count) * 15;
                     return `
                         <div class="country-bubble" style="width: ${size}px; height: ${size}px;" 
-                             data-country="${escapeHtml(country.country)}"
-                             title="${escapeHtml(country.country)}: ${country.count}개 파크">
+                             data-country="${window.escapeHtml(country.country)}"
+                             title="${window.escapeHtml(country.country)}: ${country.count}개 파크">
                             <div class="bubble-content">
                                 <span class="country-flag">${country.flag}</span>
-                                <span class="country-name">${escapeHtml(country.country)}</span>
+                                <span class="country-name">${window.escapeHtml(country.country)}</span>
                                 <span class="park-count">${country.count}</span>
                             </div>
                         </div>
@@ -220,8 +220,8 @@ function createTopParksChart() {
                             <div class="park-rank">#${index + 1}</div>
                             <div class="park-icon">${park.icon}</div>
                             <div class="park-info">
-                                <div class="park-name">${escapeHtml(park.name)}</div>
-                                <div class="park-location">${escapeHtml(park.location)}</div>
+                                <div class="park-name">${window.escapeHtml(park.name)}</div>
+                                <div class="park-location">${window.escapeHtml(park.location)}</div>
                             </div>
                             <div class="park-visitors">
                                 <div class="visitors-bar" style="width: ${percentage}%;"></div>
@@ -261,7 +261,7 @@ function createThemeDistribution() {
                         <path d="${theme.path}" 
                               fill="${theme.color}" 
                               class="donut-segment"
-                              data-theme="${escapeHtml(theme.theme)}"
+                              data-theme="${window.escapeHtml(theme.theme)}"
                               style="animation-delay: ${index * 0.1}s;">
                         </path>
                     `).join('')}
@@ -273,7 +273,7 @@ function createThemeDistribution() {
                     ${THEME_PARK_STATISTICS.parksByTheme.map(theme => `
                         <div class="legend-item">
                             <div class="legend-color" style="background: ${theme.color};"></div>
-                            <span class="legend-text">${escapeHtml(theme.theme)}</span>
+                            <span class="legend-text">${window.escapeHtml(theme.theme)}</span>
                             <span class="legend-value">${theme.count} (${theme.percentage}%)</span>
                         </div>
                     `).join('')}
@@ -301,7 +301,7 @@ function createSeasonalChart() {
                              style="height: ${season.percentage * 3}px; background: ${season.color};">
                             <span class="seasonal-percentage">${season.percentage}%</span>
                         </div>
-                        <div class="seasonal-label">${escapeHtml(season.season)}</div>
+                        <div class="seasonal-label">${window.escapeHtml(season.season)}</div>
                         <div class="seasonal-visitors">${(season.visitors / 1000000).toFixed(0)}M 방문</div>
                     </div>
                 `).join('')}
@@ -324,8 +324,8 @@ function displayFunFacts() {
                 ${THEME_PARK_STATISTICS.funFacts.map((item, index) => `
                     <div class="fact-card" style="animation-delay: ${index * 0.1}s;">
                         <div class="fact-icon">${item.icon}</div>
-                        <div class="fact-title">${escapeHtml(item.fact)}</div>
-                        <div class="fact-detail">${escapeHtml(item.detail)}</div>
+                        <div class="fact-title">${window.escapeHtml(item.fact)}</div>
+                        <div class="fact-detail">${window.escapeHtml(item.detail)}</div>
                     </div>
                 `).join('')}
             </div>

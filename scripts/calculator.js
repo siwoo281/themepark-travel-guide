@@ -125,3 +125,8 @@ function refreshBreakevenResultFormatting() {
         </ul>
     `;
 }
+
+// 노출: 전역에서 접근 가능하도록 window에 바인딩
+window.setupBreakevenCalculator = window.setupBreakevenCalculator || setupBreakevenCalculator;
+window.currencyInputToKRW = window.currencyInputToKRW || currencyInputToKRW;
+window.refreshBreakevenResultFormatting = window.refreshBreakevenResultFormatting || refreshBreakevenResultFormatting;

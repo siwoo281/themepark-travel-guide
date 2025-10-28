@@ -323,7 +323,9 @@ function formatNumber(num, locale = 'ko-KR') {
 }
 
 // 가격 포맷팅
-function formatPrice(price, currency = 'KRW') {
+// 주: 통화/환율 기반 포맷팅은 app.js의 formatPrice를 사용합니다.
+// 이 기본 포맷터는 단순 숫자 포맷 용도로만 남겨둡니다.
+function formatPriceBasic(price, currency = 'KRW') {
     const symbols = {
         KRW: '₩',
         USD: '$',
@@ -381,3 +383,14 @@ async function measurePerformanceAsync(name, callback) {
     console.log(`⏱️ ${name}: ${(end - start).toFixed(2)}ms`);
     return result;
 }
+
+// 전역 바인딩: 다른 스크립트에서 안전하게 참조 가능하도록 필요한 최소만 노출
+window.escapeHtml = window.escapeHtml || escapeHtml;
+window.handleImageError = window.handleImageError || handleImageError;
+window.showToast = window.showToast || showToast;
+window.createSkeletonCards = window.createSkeletonCards || createSkeletonCards;
+window.showErrorState = window.showErrorState || showErrorState;
+window.measurePerformance = window.measurePerformance || measurePerformance;
+window.measurePerformanceAsync = window.measurePerformanceAsync || measurePerformanceAsync;
+window.StorageHelper = window.StorageHelper || StorageHelper;
+window.optimizeImageUrl = window.optimizeImageUrl || optimizeImageUrl;

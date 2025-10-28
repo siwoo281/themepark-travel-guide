@@ -10,7 +10,7 @@ function createTourRouteCard(route) {
     return `
         <div class="tour-route-card" data-route-id="${route.id}">
             <div class="tour-route-image">
-                <img class="tour-route-img" src="${bgUrl}" alt="${escapeHtml(route.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="handleImageError(this, '${fallbackImage}')">
+                <img class="tour-route-img" src="${bgUrl}" alt="${window.escapeHtml(route.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="handleImageError(this, '${fallbackImage}')">
                 <div class="tour-route-badge">${route.duration}</div>
                 <div class="tour-route-countries">${route.countries.join(' → ')}</div>
             </div>
@@ -76,22 +76,22 @@ function showRouteDetail(routeId) {
                     <i class="fas fa-calendar-day"></i> Day ${day.day}
                 </div>
                 <div class="day-content">
-                    <h4><i class="fas fa-map-marker-alt"></i> ${escapeHtml(day.location)}</h4>
+                    <h4><i class="fas fa-map-marker-alt"></i> ${window.escapeHtml(day.location)}</h4>
                     ${day.parks.length > 0 ? `
                         <div class="day-parks">
                             <strong><i class="fas fa-ticket-alt"></i> 방문 파크:</strong>
-                            ${day.parks.map(park => `<span class="park-tag">${escapeHtml(park)}</span>`).join('')}
+                            ${day.parks.map(park => `<span class="park-tag">${window.escapeHtml(park)}</span>`).join('')}
                         </div>
                     ` : ''}
                     <div class="day-activities">
                         <strong><i class="fas fa-star"></i> 주요 활동:</strong>
                         <ul>
-                        ${day.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
+                        ${day.activities.map(act => `<li>${window.escapeHtml(act)}</li>`).join('')}
                     </ul>
                 </div>
                 <div class="day-info">
-                    <span><i class="fas fa-hotel"></i> ${escapeHtml(day.accommodation)}</span>
-                    <span><i class="fas fa-utensils"></i> ${day.meals.map(m => escapeHtml(m)).join(', ')}</span>
+                    <span><i class="fas fa-hotel"></i> ${window.escapeHtml(day.accommodation)}</span>
+                    <span><i class="fas fa-utensils"></i> ${day.meals.map(m => window.escapeHtml(m)).join(', ')}</span>
                 </div>
             </div>
         </div>

@@ -66,7 +66,7 @@ function changeCurrency(currency) {
     // 모든 가격 다시 렌더링
     loadAndDisplayParks();
     // 손익분기점 결과가 있으면 표시 통화만 갱신
-    try { refreshBreakevenResultFormatting(); } catch (_) {}
+    try { window.refreshBreakevenResultFormatting && window.refreshBreakevenResultFormatting(); } catch (_) {}
     
     showToast(`통화가 ${currency}로 변경되었습니다 💱`, 'success');
 }
@@ -107,13 +107,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadAndDisplayParks();
         
         // 폼 이벤트 리스너 설정
-        setupPlannerForm();
+        if (window.setupPlannerForm) window.setupPlannerForm();
 
     // 손익분기점 계산기 설정
-    setupBreakevenCalculator();
+    if (window.setupBreakevenCalculator) window.setupBreakevenCalculator();
         
         // 날짜 필드 초기화
-        initializeDateFields();
+        if (window.initializeDateFields) window.initializeDateFields();
         
     console.log('✅ 초기화 완료!');
     showToast('마법 같은 여행이 시작됩니다 ✨', 'success');
@@ -250,7 +250,7 @@ function tryApplyUserHeroImageOrFallback() {
             setHeroImageFromWikipedia();
             return;
         }
-        console.log('🖼️ 사용자 지정 히어로 이미지 적용 시도:', userUrl);
+    console.log('🖼️ 사용자 지정 히어로 이미지 적용 시도:', userUrl);
         heroImg.referrerPolicy = 'no-referrer';
         heroImg.crossOrigin = 'anonymous';
         heroImg.decoding = 'async';
@@ -260,9 +260,9 @@ function tryApplyUserHeroImageOrFallback() {
         heroImg.width = 1600;
         heroImg.height = 900;
         heroImg.onerror = () => {
-            console.warn('⚠️ 사용자 지정 이미지 로드 실패. 자동 탐색으로 폴백합니다:', userUrl);
-            // 자동 체인으로 폴백
-            setHeroImageFromWikipedia();
+            console.warn('⚠️ 사용자 지정 이미지 로드 실패. 로컬(2순위) → 위키 순으로 폴백합니다:', userUrl);
+            // 2순위: 로컬 최적 자산 시도, 실패 시 위키 체인
+            trySetLocalHeroThenWikipedia(heroImg);
         };
         heroImg.onload = () => {
             // 배경 레이어도 동일 이미지로 맞춰 redundancy 강화
@@ -284,6 +284,49 @@ function tryApplyUserHeroImageOrFallback() {
     }
 
     // 사용자 지정이 없으면 자동 탐색 체인 실행
+    setHeroImageFromWikipedia();
+}
+
+// 2순위 로컬 → 실패 시 위키/스톡 자동 체인으로 폴백
+async function trySetLocalHeroThenWikipedia(heroImg){
+    try {
+    const cfg = window.CONFIG?.HERO || {};
+    const basenameOrder = [cfg.localBasename || 'hero-castle-user', 'hero-castle'];
+    const dir = cfg.localDir || 'images/optimized';
+    const fallbackDir = 'images';
+        const heroSection = document.querySelector('.hero');
+        const tryOne = (src) => new Promise((resolve) => {
+            heroImg.onerror = () => resolve(false);
+            heroImg.onload = () => {
+                try {
+                    if (heroSection) {
+                        heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${src}')`;
+                        heroSection.style.backgroundSize = 'cover';
+                        heroSection.style.backgroundPosition = 'center';
+                    }
+                } catch(_){}
+                resolve(true);
+            };
+            heroImg.src = src;
+        });
+
+        // 형식 선호도: AVIF → WebP → JPG
+        const exts = ['avif','webp','jpg'];
+        for (const base of basenameOrder){
+            for (const ext of exts){
+                let src = `${dir}/${base}.${ext}`;
+                /* eslint-disable no-await-in-loop */
+                let ok = await tryOne(src);
+                if (ok) return;
+                // 최적화본이 없을 경우 원본 폴더(images/)도 시도
+                src = `${fallbackDir}/${base}.${ext}`;
+                ok = await tryOne(src);
+                if (ok) return;
+                /* eslint-enable no-await-in-loop */
+            }
+        }
+    } catch(_) { /* ignore */ }
+    // 최종: 위키/스톡 자동 체인
     setHeroImageFromWikipedia();
 }
 
@@ -653,9 +696,9 @@ async function showPackageDetail(parkIdOrObj) {
         const formattedPrice = formatPrice(price);
         
         const weatherHtml = enriched.weather 
-            ? `<div class="weather-info">
+         ? `<div class="weather-info">
                    <i class="fas fa-cloud-sun"></i> 
-                   현재 날씨: ${enriched.weather.temp}°C, ${escapeHtml(enriched.weather.description)}
+             현재 날씨: ${enriched.weather.temp}°C, ${window.escapeHtml(enriched.weather.description)}
                </div>`
             : '';
         
@@ -663,7 +706,7 @@ async function showPackageDetail(parkIdOrObj) {
             ? `<div class="highlights">
                    <h4><i class="fas fa-star"></i> 주요 어트랙션</h4>
                    <ul>
-                       ${park.highlights.map(h => `<li><i class="fas fa-check-circle"></i> ${escapeHtml(h)}</li>`).join('')}
+                       ${park.highlights.map(h => `<li><i class="fas fa-check-circle"></i> ${window.escapeHtml(h)}</li>`).join('')}
                    </ul>
                </div>`
             : '';
@@ -698,10 +741,10 @@ async function showPackageDetail(parkIdOrObj) {
                                    <div class="day-card">
                                        <div class="day-card-header">
                                            <div class="day-title-section">
-                                               <h4 class="day-title">${escapeHtml(day.title)}</h4>
+                                               <h4 class="day-title">${window.escapeHtml(day.title)}</h4>
                                                <div class="day-meta">
                                                    <span class="time-badge">
-                                                       <i class="fas fa-clock"></i> ${escapeHtml(day.time)}
+                                                       <i class="fas fa-clock"></i> ${window.escapeHtml(day.time)}
                                                    </span>
                                                </div>
                                            </div>
@@ -723,7 +766,7 @@ async function showPackageDetail(parkIdOrObj) {
                                                                        <span>${timeMatch[1]}</span>
                                                                    </div>
                                                                    <div class="activity-details">
-                                                                       <span class="activity-text">${escapeHtml(timeMatch[2])}</span>
+                                                                       <span class="activity-text">${window.escapeHtml(timeMatch[2])}</span>
                                                                    </div>
                                                                </li>
                                                            `;
@@ -734,7 +777,7 @@ async function showPackageDetail(parkIdOrObj) {
                                                                        <i class="fas fa-circle"></i>
                                                                    </div>
                                                                    <div class="activity-details">
-                                                                       <span class="activity-text">${escapeHtml(activity)}</span>
+                                                                       <span class="activity-text">${window.escapeHtml(activity)}</span>
                                                                    </div>
                                                                </li>
                                                            `;
@@ -753,7 +796,7 @@ async function showPackageDetail(parkIdOrObj) {
                                                            <h6>식사 정보</h6>
                                                            <div class="meal-tags">
                                                                ${day.meals.map(meal => `
-                                                                   <span class="meal-tag ${meal}">${escapeHtml(meal)}</span>
+                                                                   <span class="meal-tag ${meal}">${window.escapeHtml(meal)}</span>
                                                                `).join('')}
                                                            </div>
                                                        </div>
@@ -767,7 +810,7 @@ async function showPackageDetail(parkIdOrObj) {
                                                        </div>
                                                        <div class="service-content">
                                                            <h6>숙박 정보</h6>
-                                                           <p class="hotel-name">${escapeHtml(day.accommodation)}</p>
+                                                           <p class="hotel-name">${window.escapeHtml(day.accommodation)}</p>
                                                        </div>
                                                    </div>
                                                ` : ''}
@@ -798,19 +841,19 @@ async function showPackageDetail(parkIdOrObj) {
     const optimizedImage = park.image ? optimizeImageUrl(park.image, 1200) : getParkImageUrl(park, 1200, 600);
         
         modalBody.innerHTML = `
-            <h2>${escapeHtml(park.name)}</h2>
-            <p class="modal-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(park.location)}</p>
+            <h2>${window.escapeHtml(park.name)}</h2>
+            <p class="modal-location"><i class="fas fa-map-marker-alt"></i> ${window.escapeHtml(park.location)}</p>
             
             ${weatherHtml}
             
             <img src="${optimizedImage}" 
-                 alt="${escapeHtml(park.name)}" 
+                 alt="${window.escapeHtml(park.name)}" 
                  style="width: 100%; border-radius: 15px; margin: 1rem 0;"
               loading="lazy"
               referrerpolicy="no-referrer"
               onerror="handleImageError(this, '${fallbackImage}')">
             
-            <p style="font-size: 1.1rem; line-height: 1.8; margin: 1rem 0;">${escapeHtml(park.description)}</p>
+            <p style="font-size: 1.1rem; line-height: 1.8; margin: 1rem 0;">${window.escapeHtml(park.description)}</p>
             
             ${highlightsHtml}
             
@@ -822,7 +865,7 @@ async function showPackageDetail(parkIdOrObj) {
                     ${park.includes.map(item => `
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
                             <i class="${getIncludeIcon(item)}" style="color: var(--success); margin-right: 10px;"></i>
-                            ${escapeHtml(item)}
+                            ${window.escapeHtml(item)}
                         </li>
                     `).join('')}
                 </ul>
@@ -831,7 +874,7 @@ async function showPackageDetail(parkIdOrObj) {
             <div class="price-section" style="text-align: center; margin: 2rem 0; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
                 <h3 style="margin-bottom: 1rem;">패키지 가격</h3>
                 <div style="font-size: 3rem; font-weight: 900;">${formattedPrice}</div>
-                <p style="opacity: 0.9; margin-top: 0.5rem;">${escapeHtml(park.duration)} 기준 1인 가격</p>
+                <p style="opacity: 0.9; margin-top: 0.5rem;">${window.escapeHtml(park.duration)} 기준 1인 가격</p>
                 <button class="btn btn-primary" style="margin-top: 1rem; padding: 15px 40px; font-size: 1.1rem;" onclick="bookPackage('${park.id}')">
                     <i class="fas fa-shopping-cart"></i> 지금 예약하기
                 </button>

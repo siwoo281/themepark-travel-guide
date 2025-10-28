@@ -29,8 +29,9 @@ const CONFIG = {
         // 초기 페인트용 플레이스홀더도 동일한 저용량 이미지로 통일
         placeholderUrl: 'https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50',
         allowQueryOverride: true,
-        // 로컬 우선 히어로 자산 사용 (있을 경우)
-        useLocalHeroFirst: true,
+        // 로컬 우선 히어로 자산 사용 (있을 경우) → 요청에 따라 비활성화하여 원격이 1순위가 되도록 함
+        useLocalHeroFirst: false,
+        // 로컬 히어로 베이스네임 (2순위) - 업로드된 파일 이름에 맞춤
         localBasename: 'hero-castle',
         localDir: 'images/optimized'
     },
