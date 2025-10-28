@@ -15,9 +15,7 @@
     <link rel="preconnect" href="https://source.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
-    <link rel="stylesheet" href="style.css?v=20251028-1">
-    <link rel="stylesheet" href="about.css">
-    <link rel="stylesheet" href="statistics.css">
+    <link rel="stylesheet" href="style.css?v=20251028-2">
 </head>
 <body>
     <!-- 헤더 -->
@@ -27,7 +25,10 @@
                 <i class="fas fa-ticket-alt"></i>
                 <h1>테마파크 여행 프로그램</h1>
             </div>
-            <nav class="nav">
+            <button id="menuToggle" class="menu-toggle" aria-label="메뉴 열기" aria-controls="primaryNav" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="primaryNav" class="nav" role="navigation">
                 <a href="#about">About</a>
                 <a href="#tour-routes">투어 루트</a>
                 <a href="#packages">여행 상품</a>
@@ -59,7 +60,7 @@
         </div>
     </section>
 
-    <div class="main-container">
+    <main class="main-container" role="main">
         <!-- About 섹션 -->
         <section id="about" class="about-section">
             <div class="about-container">
@@ -529,7 +530,7 @@
 
         
 
-    </div>
+    </main>
 
     <!-- 상품 상세 모달 -->
     <div class="modal" id="productModal">
@@ -558,6 +559,7 @@
     <script src="tour-routes.js"></script>
     <script src="tour-display.js"></script>
     <script src="search.js"></script>
+    <script src="scripts/nav.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
