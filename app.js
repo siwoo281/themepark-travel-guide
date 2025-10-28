@@ -165,9 +165,25 @@ function tryApplyUserHeroImageOrFallback() {
         heroImg.setAttribute('data-fallback-src', fallbackSrc);
     }
 
+    // -1) 플레이스홀더가 설정되어 있고 캐시가 없으면, 일단 플레이스홀더를 적용해 초기 페인트 제어
+    let cached = null;
+    try {
+        cached = localStorage.getItem('HERO_IMAGE_URL');
+    } catch (_) { /* ignore */ }
+    const placeholder = window.CONFIG?.HERO?.placeholderUrl;
+    if (!cached && placeholder) {
+        try {
+            if (heroSection) {
+                heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${placeholder}')`;
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center';
+            }
+            heroImg.src = placeholder;
+        } catch (_) { /* noop */ }
+    }
+
     // 0) 캐시된 히어로 이미지가 있으면 즉시 적용 (재방문 시 첫 페인트 지연 없이 표시)
     try {
-        const cached = localStorage.getItem('HERO_IMAGE_URL');
         if (cached) {
             // 미리 로드 힌트 추가 (런타임 프리로드)
             const link = document.createElement('link');
