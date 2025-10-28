@@ -37,7 +37,7 @@ const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
 // 최적화 옵션
 const OPTIMIZATION_OPTIONS = {
-    width: 1200,
+    width: 1600,
     quality: 85,
     formats: ['avif', 'webp', 'jpg']
 };

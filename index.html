@@ -9,12 +9,24 @@
     <meta http-equiv="Expires" content="0">
     <!-- build: 2025-10-28T08:00:00Z | force pages cache-bust -->
     <title>테마파크 여행 프로그램 - 전세계 테마파크 여행의 모든 것</title>
+    <meta name="theme-color" content="#667eea">
+    <!-- Social Sharing (OG/Twitter) -->
+    <meta property="og:title" content="테마파크 여행 프로그램 - 전세계 테마파크 여행의 모든 것">
+    <meta property="og:description" content="전 세계 테마파크 패키지, 일정, 통계 & 맞춤 플래너까지. 당신의 마법 같은 여행을 시작하세요.">
+    <meta property="og:image" content="https://siwoo281.github.io/themepark-travel-guide/images/optimized/hero-castle.jpg">
+    <meta property="og:url" content="https://siwoo281.github.io/themepark-travel-guide/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 폰트 최적화: gstatic 사전 연결 -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- 이미지 CDN 사전 연결로 LCP 가속 -->
     <link rel="preconnect" href="https://source.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+    <!-- 투어 카드 기본 이미지 CDN 사전 연결 (config에서 사용) -->
+    <link rel="preconnect" href="https://i.postimg.cc" crossorigin>
     <!-- Preload 1st-priority hero image to improve LCP -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50">
     <link rel="stylesheet" href="style.css?v=20251028-2">
@@ -55,11 +67,13 @@
     <section class="hero" style="background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50') no-repeat center center/cover;">
         <div class="hero-bg-img" aria-hidden="true">
             <!-- 요청에 따라 원격(Unsplash 블러) 1순위, 로컬은 실패 시 2순위로 시도 -->
-            <img src="https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50"
+          <img src="https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50"
                  alt=""
                  loading="eager"
                  decoding="async"
                  fetchpriority="high"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
                  width="1600"
                  height="900" />
         </div>

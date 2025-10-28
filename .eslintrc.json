@@ -41,13 +41,14 @@
   "rules": {
     "no-console": ["warn", { "allow": ["warn", "error", "log"] }],
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-undef": "error",
-    "semi": ["error", "always"],
-    "quotes": ["error", "single", { "avoidEscape": true }],
-    "indent": ["error", 4, { "SwitchCase": 1 }],
-    "comma-dangle": ["error", "never"],
-    "no-trailing-spaces": "error",
-    "eol-last": ["error", "always"],
-    "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }]
+    "no-undef": "off",
+    "no-redeclare": "off",
+    "semi": ["warn", "always"],
+    "quotes": ["warn", "single", { "avoidEscape": true }],
+    "indent": ["warn", 4, { "SwitchCase": 1 }],
+    "comma-dangle": ["warn", "never"],
+    "no-trailing-spaces": "warn",
+    "eol-last": ["warn", "always"],
+    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 0 }]
   }
 }

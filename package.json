@@ -14,8 +14,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/themepark-travel-guide.git"
+    "url": "git+https://github.com/siwoo281/themepark-travel-guide.git"
   },
+  "homepage": "https://siwoo281.github.io/themepark-travel-guide/",
   "keywords": [
     "theme-park",
     "travel",

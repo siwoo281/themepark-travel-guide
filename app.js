@@ -66,7 +66,7 @@ function changeCurrency(currency) {
     // 모든 가격 다시 렌더링
     loadAndDisplayParks();
     // 손익분기점 결과가 있으면 표시 통화만 갱신
-    try { window.refreshBreakevenResultFormatting && window.refreshBreakevenResultFormatting(); } catch (_) {}
+    try { window.refreshBreakevenResultFormatting && window.refreshBreakevenResultFormatting(); } catch (_) { console.debug('refreshBreakevenResultFormatting noop'); }
     
     showToast(`통화가 ${currency}로 변경되었습니다 💱`, 'success');
 }
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     tryApplyUserHeroImageOrFallback();
     
     // 마지막 업데이트 배지 표시 (티켓 가격 자동화 타임스탬프)
-    try { renderLastUpdateBadge(); } catch (_) { /* noop */ }
+    try { renderLastUpdateBadge(); } catch (_) { console.debug('renderLastUpdateBadge noop'); }
 
     // 환율 데이터 로드
     await loadExchangeRates();
@@ -169,7 +169,7 @@ function tryApplyUserHeroImageOrFallback() {
     let cached = null;
     try {
         cached = localStorage.getItem('HERO_IMAGE_URL');
-    } catch (_) { /* ignore */ }
+    } catch (_) { console.debug('localStorage get HERO_IMAGE_URL failed'); }
     const placeholder = window.CONFIG?.HERO?.placeholderUrl;
     if (!cached && placeholder) {
         try {
@@ -179,7 +179,7 @@ function tryApplyUserHeroImageOrFallback() {
                 heroSection.style.backgroundPosition = 'center';
             }
             heroImg.src = placeholder;
-        } catch (_) { /* noop */ }
+        } catch (_) { console.debug('placeholder apply noop'); }
     }
 
     // 0) 캐시된 히어로 이미지가 있으면 즉시 적용 (재방문 시 첫 페인트 지연 없이 표시)
@@ -201,7 +201,7 @@ function tryApplyUserHeroImageOrFallback() {
             heroImg.fetchPriority = 'high';
             heroImg.width = 1600;
             heroImg.height = 900;
-            try { setHeroImageResponsiveSources(heroImg, cached); } catch (_) {}
+            try { setHeroImageResponsiveSources(heroImg, cached); } catch (_) { console.debug('setHeroImageResponsiveSources noop'); }
             heroImg.src = cached;
             if (heroSection) {
                 heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${cached}')`;
@@ -209,7 +209,7 @@ function tryApplyUserHeroImageOrFallback() {
                 heroSection.style.backgroundPosition = 'center';
             }
         }
-    } catch (_) { /* ignore storage errors */ }
+    } catch (_) { console.debug('ignore storage errors'); }
 
     // 쿼리 파라미터 우선
     const params = new URLSearchParams(window.location.search);
@@ -230,11 +230,11 @@ function tryApplyUserHeroImageOrFallback() {
                 heroSection.style.backgroundSize = 'cover';
                 heroSection.style.backgroundPosition = 'center';
             }
-            try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) {}
+            try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) { console.debug('setHeroImageResponsiveSources noop'); }
             heroImg.src = userUrl;
-            try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) {}
+            try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) { console.debug('localStorage set HERO_IMAGE_URL failed'); }
         }
-    } catch (_) { /* noop */ }
+    } catch (_) { console.debug('preferredUrl cache-bust noop'); }
 
     if (userUrl) {
         // 이미지 URL 형태인지 간단히 검사 (확장자 또는 data:image)
@@ -273,12 +273,12 @@ function tryApplyUserHeroImageOrFallback() {
                     heroSection.style.backgroundPosition = 'center';
                 }
                 // 성공 시 캐시 저장
-                try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) {}
-            } catch (_) { /* noop */ }
+                try { localStorage.setItem('HERO_IMAGE_URL', userUrl); } catch (_) { console.debug('localStorage set HERO_IMAGE_URL failed'); }
+            } catch (_) { console.debug('apply userUrl to heroSection noop'); }
             console.log('✅ 사용자 지정 히어로 이미지 적용 성공');
         };
         // 반응형 소스 세팅 (가능한 경우)
-        try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) {}
+        try { setHeroImageResponsiveSources(heroImg, userUrl); } catch (_) { console.debug('setHeroImageResponsiveSources noop'); }
         heroImg.src = userUrl;
         return;
     }
@@ -304,7 +304,7 @@ async function trySetLocalHeroThenWikipedia(heroImg){
                         heroSection.style.backgroundSize = 'cover';
                         heroSection.style.backgroundPosition = 'center';
                     }
-                } catch(_){}
+                } catch(_) { console.debug('set local hero background noop'); }
                 resolve(true);
             };
             heroImg.src = src;
@@ -325,7 +325,7 @@ async function trySetLocalHeroThenWikipedia(heroImg){
                 /* eslint-enable no-await-in-loop */
             }
         }
-    } catch(_) { /* ignore */ }
+    } catch(_) { console.debug('trySetLocalHeroThenWikipedia noop'); }
     // 최종: 위키/스톡 자동 체인
     setHeroImageFromWikipedia();
 }
@@ -363,10 +363,10 @@ function setHeroImageFromCandidates(imgEl, candidates, fallbackSrc) {
                     heroSection.style.backgroundPosition = 'center';
                 }
                 // 성공적으로 로드된 URL을 캐시에 저장하여 다음 방문 시 즉시 표시
-                try { localStorage.setItem('HERO_IMAGE_URL', next); } catch (_) {}
-            } catch (_) { /* noop */ }
+                try { localStorage.setItem('HERO_IMAGE_URL', next); } catch (_) { console.debug('localStorage set HERO_IMAGE_URL failed'); }
+            } catch (_) { console.debug('apply candidate to heroSection noop'); }
         };
-        try { setHeroImageResponsiveSources(imgEl, next); } catch (_) {}
+        try { setHeroImageResponsiveSources(imgEl, next); } catch (_) { console.debug('setHeroImageResponsiveSources noop'); }
         imgEl.src = next;
     };
 
