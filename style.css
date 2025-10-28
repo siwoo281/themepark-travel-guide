@@ -9,6 +9,12 @@
     --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --shadow: 0 10px 40px rgba(0,0,0,0.1);
+    /* Centralized breakpoints */
+    --bp-xs: 360px;
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1400px;
 }
 
 * {
@@ -28,6 +34,20 @@ body {
 html {
     scroll-behavior: smooth;
 }
+
+/* ===== Utility classes ===== */
+.text-center { text-align: center !important; }
+.sr-only, .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: .25rem !important; }
+.mt-2 { margin-top: .5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: .25rem !important; }
+.mb-2 { margin-bottom: .5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
 
 .container {
     max-width: 1400px;
@@ -1631,6 +1651,14 @@ html {
     .hero p {
         font-size: 1.8rem;
     }
+}
+
+/* 초소형 화면 대응 (<= 360px) */
+@media (max-width: 360px) {
+    .logo h1 { font-size: 1.1rem; }
+    .currency-selector { padding: 6px 10px; gap: 6px; }
+    .hero h2 { font-size: 2.2rem; }
+    .hero p { font-size: 1.1rem; }
 }
 
 /* ====== Merged from about.css (scoped as-is) ====== */

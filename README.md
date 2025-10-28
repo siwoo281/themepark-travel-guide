@@ -173,3 +173,27 @@ MIT License
 ---
 
 Made with ❤️ for theme park lovers 🎢
+
+## 🖼️ 로컬 히어로 이미지 최적화/적용
+
+히어로 섹션은 로컬 자산(선호: AVIF → WebP → JPG)을 우선 사용하도록 구성되어 있습니다. 브라우저가 지원하지 않거나 파일이 없으면 자동으로 기존 저용량(블러) 외부 이미지를 폴백합니다.
+
+1) 이미지 추가
+- 원본 이미지를 `images/hero-castle.jpg` 등으로 저장하세요. (이름은 자유, 기본값은 `hero-castle`)
+
+2) 최적화 실행 (AVIF/WebP/JPG 자동 생성)
+
+```bash
+npm run optimize-images
+```
+
+- 출력 위치: `images/optimized/hero-castle.{avif,webp,jpg}`
+
+3) 설정 변경 (선택)
+- `config.js`의 `CONFIG.HERO.localBasename`과 `localDir`를 조정해 다른 파일명을 사용할 수 있습니다.
+- 기본값: `localBasename: 'hero-castle'`, `localDir: 'images/optimized'`
+
+4) 동작 방식
+- `index.html`의 `<picture>`가 로컬 AVIF/WebP를 우선 시도하고, 실패 시 기존 블러 이미지를 사용합니다.
+- 초기 페인트는 여전히 초저용량 이미지로 매우 빠르게 표시되며, 로컬 고화질 자산으로 자연스레 대체됩니다.
+

@@ -39,7 +39,7 @@ const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 const OPTIMIZATION_OPTIONS = {
     width: 1200,
     quality: 85,
-    formats: ['webp', 'jpg']
+    formats: ['avif', 'webp', 'jpg']
 };
 
 async function optimizeImage(inputPath, filename) {
@@ -53,6 +53,22 @@ async function optimizeImage(inputPath, filename) {
         const metadata = await image.metadata();
 
         console.log(`   크기: ${metadata.width}x${metadata.height}, 포맷: ${metadata.format}`);
+
+        // AVIF 변환 (최신 브라우저 고효율 포맷)
+        if (OPTIMIZATION_OPTIONS.formats.includes('avif')) {
+            const avifPath = path.join(OUTPUT_DIR, `${name}.avif`);
+            await image
+                .clone()
+                .resize(OPTIMIZATION_OPTIONS.width, null, {
+                    withoutEnlargement: true,
+                    fit: 'inside'
+                })
+                .avif({ quality: Math.min(OPTIMIZATION_OPTIONS.quality + 5, 95) })
+                .toFile(avifPath);
+
+            const avifStats = fs.statSync(avifPath);
+            console.log(`   ✓ AVIF 저장: ${(avifStats.size / 1024).toFixed(2)} KB`);
+        }
 
         // WebP 변환
         if (OPTIMIZATION_OPTIONS.formats.includes('webp')) {
