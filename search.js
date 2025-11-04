@@ -33,9 +33,13 @@ class SearchManager {
             <div class="search-results" id="searchResults" style="display: none;"></div>
         `;
 
-        // 헤더 다음에 삽입
+        // 헤더 다음에 삽입 (없으면 body에 추가)
         const header = document.querySelector('.header');
-        header.after(searchBar);
+        if (header) {
+            header.after(searchBar);
+        } else {
+            document.body.prepend(searchBar);
+        }
 
         this.searchInput = document.getElementById('globalSearch');
         this.searchResults = document.getElementById('searchResults');
