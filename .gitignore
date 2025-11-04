@@ -115,3 +115,8 @@ server.pid
 
 # Documentation temp files
 *.md.backup
+
+# Crawled data (auto-generated)
+prices-data.json
+prices-data-detailed.json
+
