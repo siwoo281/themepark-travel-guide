@@ -31,69 +31,63 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1595274013294-6946aac9eb22?auto=format&fit=crop&q=35&w=800&blur=50">
     <link rel="stylesheet" href="style.css?v=20251028-2">
     <link rel="stylesheet" href="prices.css?v=20251028-2">
-    <!-- Leaflet 지도 라이브러리 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        .custom-div-icon {
-            background: none;
-            border: none;
-        }
-        .map-marker-number {
-            position: relative;
-            width: 30px;
-            height: 42px;
-            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 42"><path fill="%23764ba2" d="M16 0C7.163 0 0 7.163 0 16c0 8.837 16 26 16 26s16-17.163 16-26C32 7.163 24.837 0 16 0z"/><circle fill="%23ffffff" cx="16" cy="16" r="12"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-        .map-marker-number span {
-            color: #764ba2;
-            font-weight: 900;
-            font-size: 14px;
-            line-height: 1;
-            margin-top: -6px; /* Adjust for pin shape */
-        }
-        .map-tooltip {
-            background-color: rgba(255, 255, 255, 0.85);
-            border: 1px solid #764ba2;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 13px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            white-space: nowrap;
-        }
-    </style>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="tour-routes.js"></script> 
-    <script src="js/tour-route-map.js?v=20251104"></script>
-</head>
-<body>
-    <!-- 헤더 -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-ticket-alt"></i>
-                <h1>테마파크 여행 프로그램</h1>
-            </div>
-            <button id="menuToggle" class="menu-toggle" aria-label="메뉴 열기" aria-controls="primaryNav" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav id="primaryNav" class="nav" role="navigation">
-                <a href="#about">About</a>
-                <a href="#tour-routes">투어 루트</a>
-                <a href="#packages">여행 상품</a>
-                <a href="#statistics">통계</a>
-                <a href="#planner">일정 짜기</a>
-            </nav>
-            <div class="currency-selector">
-                <i class="fas fa-exchange-alt"></i>
-                <select id="currencySelect" onchange="changeCurrency(this.value)">
-                    <option value="KRW">₩ KRW</option>
+
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>아시아 테마파크 그랜드 투어 지도</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <style>
+            .custom-div-icon {
+                background: none;
+                border: none;
+            }
+            .map-marker-number {
+                position: relative;
+                width: 30px;
+                height: 42px;
+                background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 42"><path fill="%23764ba2" d="M16 0C7.163 0 0 7.163 0 16c0 8.837 16 26 16 26s16-17.163 16-26C32 7.163 24.837 0 16 0z"/><circle fill="%23ffffff" cx="16" cy="16" r="12"/></svg>');
+                background-size: contain;
+                background-repeat: no-repeat;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: 'Noto Sans KR', sans-serif;
+            }
+            .map-marker-number span {
+                color: #764ba2;
+                font-weight: 900;
+                font-size: 14px;
+                line-height: 1;
+                margin-top: -6px;
+            }
+            .map-tooltip {
+                background-color: rgba(255, 255, 255, 0.85);
+                border: 1px solid #764ba2;
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-family: 'Noto Sans KR', sans-serif;
+                font-size: 13px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                white-space: nowrap;
+            }
+        </style>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="tour-routes.js"></script>
+        <script src="js/tour-route-map.js?v=20251104"></script>
+    </head>
+    <body>
+        <div style="max-width:800px;margin:2rem auto 3rem auto;">
+          <h3 style="text-align:center;color:#764ba2;margin-bottom:1rem;">
+            아시아 테마파크 그랜드 투어 경로
+          </h3>
+          <div id="asiaGrandTourMap" style="width:100%;height:400px;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);"></div>
+          <script>document.addEventListener('DOMContentLoaded',function(){if(window.renderAsiaGrandTourMap){renderAsiaGrandTourMap('asiaGrandTourMap');}});</script>
+        </div>
+    </body>
+    </html>
                     <option value="USD">$ USD</option>
                     <option value="JPY">¥ JPY</option>
                     <option value="EUR">€ EUR</option>
