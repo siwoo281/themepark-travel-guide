@@ -85,25 +85,6 @@ function renderAsiaGrandTourMap(containerId) {
 
 // 전역 등록
 window.renderAsiaGrandTourMap = renderAsiaGrandTourMap;
-  if (!window.L || !window.TOUR_ROUTES) {
-    console.error('Leaflet.js 또는 tour-routes.js가 로드되지 않았습니다.');
-    return;
-  }
-
-  const asiaTour = TOUR_ROUTES.find(route => route.id === 'asia-grand-tour');
-  if (!asiaTour) {
-    console.error('아시아 그랜드 투어 정보를 찾을 수 없습니다.');
-    return;
-  }
-
-  // 좌표 매핑 (오사카 추가)
-  const locationCoords = {
-    '서울': [37.5665, 126.9780],
-    '도쿄': [35.6895, 139.6917],
-    '오사카': [34.6937, 135.5023],
-    '홍콩': [22.3193, 114.1694],
-    '싱가포르': [1.3521, 103.8198]
-  };
 
   // Itinerary에서 동적으로 경로와 체류 기간 생성
   const waypoints = [];
