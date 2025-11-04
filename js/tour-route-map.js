@@ -48,6 +48,8 @@ function renderAsiaGrandTourMap(containerId) {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
+  // 지도 컨테이너 크기 문제 해결
+  setTimeout(function(){ map.invalidateSize(); }, 100);
 
   // 기본 경로 Polyline
   const mainRouteLatLngs = waypoints.map(p => p.coords);
