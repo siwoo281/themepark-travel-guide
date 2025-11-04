@@ -12,19 +12,37 @@ function renderAsiaGrandTourMap(containerId) {
     return;
   }
 
-  // 도시별 체류 기간 계산
-  const stays = asiaTour.itinerary.reduce((acc, item) => {
-    const locationName = item.location.split(' ')[0]; // '서울 (한국)' -> '서울'
-    acc[locationName] = (acc[locationName] || 0) + 1;
-    return acc;
-  }, {});
+  // 좌표 매핑 (오사카 추가)
+  const locationCoords = {
+    '서울': [37.5665, 126.9780],
+    '도쿄': [35.6895, 139.6917],
+    '오사카': [34.6937, 135.5023],
+    '홍콩': [22.3193, 114.1694],
+    '싱가포르': [1.3521, 103.8198]
+  };
 
-  const ASIA_GRAND_ROUTE_WITH_STAYS = [
-    { name: '서울 (한국)', coords: [37.5665, 126.9780], stay: stays['서울'] || 0 },
-    { name: '도쿄 (일본)', coords: [35.6895, 139.6917], stay: stays['도쿄'] || 0 },
-    { name: '홍콩', coords: [22.3193, 114.1694], stay: stays['홍콩'] || 0 },
-    { name: '싱가포르', coords: [1.3521, 103.8198], stay: stays['싱가포르'] || 0 }
-  ];
+  // Itinerary에서 동적으로 경로와 체류 기간 생성
+  const waypoints = [];
+  const stays = {};
+  
+  asiaTour.itinerary.forEach(item => {
+    const locationName = item.location.split(' ')[0];
+    stays[locationName] = (stays[locationName] || 0) + 1;
+  });
+
+  // 순서대로 경유지 정보 구성
+  const uniqueLocations = [...new Set(asiaTour.itinerary.map(item => item.location.split(' ')[0]))];
+  
+  uniqueLocations.forEach(locName => {
+      if (locationCoords[locName]) {
+          waypoints.push({
+              name: locName,
+              coords: locationCoords[locName],
+              stay: stays[locName] || 0
+          });
+      }
+  });
+
 
   const map = L.map(containerId).setView([25, 110], 4);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -32,11 +50,11 @@ function renderAsiaGrandTourMap(containerId) {
   }).addTo(map);
 
   // 기본 경로 Polyline
-  const mainRouteLatLngs = ASIA_GRAND_ROUTE_WITH_STAYS.map(p => p.coords);
+  const mainRouteLatLngs = waypoints.map(p => p.coords);
   L.polyline(mainRouteLatLngs, { color: '#764ba2', weight: 5, opacity: 0.8 }).addTo(map);
   
-  // 한국으로 돌아오는 점선 경로
-  const returnRouteLatLngs = [mainRouteLatLngs[mainRouteLatLngs.length - 1], mainRouteLatLngs[0]];
+  // 한국으로 돌아오는 점선 경로 (서울 좌표 직접 사용)
+  const returnRouteLatLngs = [mainRouteLatLngs[mainRouteLatLngs.length - 1], locationCoords['서울']];
   L.polyline(returnRouteLatLngs, { color: '#764ba2', weight: 5, opacity: 0.8, dashArray: '10, 5' }).addTo(map);
 
   // 전체 경로에 맞춰 지도 범위 조절
@@ -44,7 +62,7 @@ function renderAsiaGrandTourMap(containerId) {
   map.fitBounds(fullBounds, { padding: [50, 50] });
 
   // 각 도시 마커 (번호 및 체류 기간 표시)
-  ASIA_GRAND_ROUTE_WITH_STAYS.forEach((point, idx) => {
+  waypoints.forEach((point, idx) => {
     const customIcon = L.divIcon({
       className: 'custom-div-icon',
       html: `<div class="map-marker-number"><span>${idx + 1}</span></div>`,
