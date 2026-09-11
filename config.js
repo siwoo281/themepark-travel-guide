@@ -1,4 +1,4 @@
-// 마지막 업데이트: 2026-09-10T22:56:03.357517
+// 마지막 업데이트: 2026-09-11T22:57:30.703751
 // ===== 설정 파일 =====
 
 const CONFIG = {
@@ -1540,11 +1540,14 @@ CONFIG.TICKET_PRICES_UPDATED_AT = "2026-09-08T23:09:17.985587";
 CONFIG.TICKET_PRICES_UPDATED_AT = "2026-09-09T22:54:27.634538";
 
 // 자동 티켓 가격 (KRW) - 자동 생성, 수정 금지
+CONFIG.TICKET_PRICES_UPDATED_AT = "2026-09-10T22:56:03.357517";
+
+// 자동 티켓 가격 (KRW) - 자동 생성, 수정 금지
 CONFIG.TICKET_PRICES = {
   "everland": 38500,
-  "disneyland-tokyo": 85000,
+  "disneyland-tokyo": 91500,
   "universal-osaka": 69600
 };
-CONFIG.TICKET_PRICES_UPDATED_AT = "2026-09-10T22:56:03.357517";
+CONFIG.TICKET_PRICES_UPDATED_AT = "2026-09-11T22:57:30.703751";
 
 window.CONFIG = CONFIG;
